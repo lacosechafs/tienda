@@ -1,13 +1,13 @@
 "use client"
 
+import { useAppSelector } from '@/hooks/useRedux'
 import { RootState } from '@/redux/makeStore'
 import { dataProducts } from '@/types/types'
-import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect, useRef, useState } from 'react'
 
 export const InputSearch = () => {
 
-    const products = useSelector((state: RootState) => state.data.products)
+    const products = useAppSelector((state: RootState) => state.data.products)
 
     const [findProduct, setFindProduct] = useState<string>("");
 
@@ -57,32 +57,48 @@ export const InputSearch = () => {
         return a.name.localeCompare(b.name);
     })
 
+    const searchRef = useRef<HTMLDivElement>(null)
+    const [focusItem, setFocusItem] = useState(true)
+
+    const isFocus = (e: MouseEvent) => {
+        if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+            setFocusItem(false)
+        } else {
+            setFocusItem(true)
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("mousedown", isFocus);
+
+        return () => {
+            document.removeEventListener("mousedown", isFocus);
+        };
+    }, []);
+
     return (
-        <div className="flex h-fit self-center relative p-2">
-            <input id='search' type="text" placeholder='Busqueda de producto' onChange={(e) => setFindProduct(e.target.value.trim())} />
+        <div className="flex h-fit self-center relative p-2" ref={searchRef} >
+            <input id='search' className='px-2' type="text" placeholder='Busqueda de producto' onChange={(e) => setFindProduct(e.target.value.trim())} />
             {/* Resultados */}
-            <div className="absolute top-[calc(100%-8px)] left-2 px-2 bg-red-500">
+            <div className={`absolute top-[calc(100%-8px)] left-2 px-2 bg-(--background) transition-discrete duration-500 ${focusItem ? "opacity-100 block starting:opacity-0" : "opacity-0 hidden"}`}>
                 {products.map(f => {
-                    const productosDeEstaCategoria = flatProducts.filter(m =>
+                    const productsByCategory = flatProducts.filter(m =>
                         m.category === f.name
                     );
 
-                    if (productosDeEstaCategoria.length === 0) return null;
+                    if (productsByCategory.length === 0) return null;
 
                     return (
                         <div key={f.name}>
-                            <p>
+                            <p className='font-bold text-[18px] border-b my-2'>
                                 {f.name}
                             </p>
-                            {productosDeEstaCategoria
+                            {productsByCategory
                                 .map(p => {
                                     return (
-                                        <div>
-                                            <p key={p.id}>
-                                                {p.name}
-                                            </p>
-
-                                        </div>
+                                        <p key={p.id}>
+                                            {p.name}
+                                        </p>
                                     )
                                 })
                             }

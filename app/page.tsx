@@ -1,6 +1,5 @@
 "use client"
-import { useAppSelector } from "@/hooks/useRedux";
-import { RootState } from "@/redux/makeStore";
+import { Categories } from "@/components/categories";
 
 export default function Home() {
 
@@ -9,6 +8,7 @@ export default function Home() {
 
   return (
     <>
+      {/* <Categories /> */}
     </>
   )
 }

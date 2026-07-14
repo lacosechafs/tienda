@@ -1,3 +1,6 @@
+export interface Props {
+    params: Promise<{ slug: string }>
+}
 
 export interface dataCatalog {
     available_discount: boolean;
@@ -11,6 +14,13 @@ export interface dataCatalog {
     unit: string;
     bulk_stock: number;
     stored_stock: number;
+}
+
+export interface ArrayProduct {
+    id: number;
+    name: string;
+    quantity: number;
+    size: number;
 }
 
 export interface dataProducts {
@@ -28,3 +38,14 @@ export interface dataCategories {
     products: Array<dataProducts>;
     slug: string;
 }
+
+export interface ProductsState {
+    products: any[];
+}
+
+
+export interface CartType {
+    products: Array<ArrayProduct>
+}
+
+export type ProductPayload = Omit<ArrayProduct, 'quantity'>

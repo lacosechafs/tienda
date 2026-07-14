@@ -1,12 +1,12 @@
 "use client"
 
 import { useEffect, useRef } from "react";
-import { useDispatch } from "react-redux"
 import { setData } from "./dataSlice";
+import { useAppDispatch } from "@/hooks/useRedux";
 
 export const Initializer = ({ initialData }: { initialData: any[] }) => {
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const initialized = useRef(false)
 
     useEffect(() => {
