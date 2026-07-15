@@ -1,10 +1,9 @@
 "use client"
 
 import { dataCatalog } from "@/types/types";
-
 import { SizeZone } from "./size-zone";
 import { QuantityInput } from "./quantity-input";
-import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
+import { useAppSelector } from "@/hooks/useRedux";
 import { RootState } from "@/redux/makeStore";
 import { useEffect, useMemo, useState } from "react";
 import { SelectorNumber } from "./selectorNumber";

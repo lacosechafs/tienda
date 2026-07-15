@@ -53,7 +53,8 @@ export default async function RootLayout({
                     percentage_discount,
                     available_discount,
                     start_discount,
-                    end_discount
+                    end_discount,
+                    featured
                 )
                 )
             `);

@@ -44,14 +44,13 @@ export const Categories = () => {
                         const haveProducts = c.products.some((d: dataProducts) => d.catalog.length)
                         if (haveProducts) {
                             return (
-                                <div key={c.id} className="my-1 px-2 whitespace-nowrap">
-                                    <a
-                                        href={c.slug}
-                                        onClick={() => setShowCat(prev => !prev)}
-                                    >
-                                        {c.name}
-                                    </a>
-                                </div>
+                                <a
+                                    key={c.id} className="py-px px-2 whitespace-nowrap"
+                                    href={c.slug}
+                                    onClick={() => setShowCat(prev => !prev)}
+                                >
+                                    {c.name}
+                                </a>
                             )
                         }
                     })}

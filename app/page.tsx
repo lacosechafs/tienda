@@ -1,14 +1,10 @@
-"use client"
-import { Categories } from "@/components/categories";
+import { FeaturedProducts } from "@/components/featured-products";
 
 export default function Home() {
 
-  // const products = useAppSelector((state: RootState) => state.data.data)
-
-
   return (
     <>
-      {/* <Categories /> */}
+      <FeaturedProducts />
     </>
   )
 }

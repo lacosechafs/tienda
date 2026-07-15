@@ -14,6 +14,7 @@ export interface dataCatalog {
     unit: string;
     bulk_stock: number;
     stored_stock: number;
+    featured: boolean;
 }
 
 export interface ArrayProduct {
