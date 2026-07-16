@@ -4,6 +4,7 @@ import { useAppSelector } from '@/hooks/useRedux'
 import { RootState } from '@/redux/makeStore'
 import { dataProducts } from '@/types/types'
 import { useEffect, useRef, useState } from 'react'
+import { InputBycat } from './input-bycat'
 
 export const InputSearch = () => {
 
@@ -78,32 +79,20 @@ export const InputSearch = () => {
 
     return (
         <div className="flex h-fit self-center relative p-2" ref={searchRef} >
-            <input id='search' className='px-2' type="text" placeholder='Busqueda de producto' onChange={(e) => setFindProduct(e.target.value.trim())} />
+            <input id='search' className='px-2' type="text" placeholder='Busqueda de producto' onChange={(e) => setFindProduct(e.target.value.trim())} autoComplete='off' />
             {/* Resultados */}
-            <div className={`absolute top-[calc(100%-8px)] left-2 px-2 bg-(--background) transition-discrete duration-500 ${focusItem ? "opacity-100 block starting:opacity-0" : "opacity-0 hidden"}`}>
+            <div className={`grid absolute top-[calc(100%-8px)] left-0 px-3 bg-(--background) transition-discrete duration-500 ${focusItem && flatProducts.length ? "opacity-100 block starting:opacity-0 grid-rows-[1fr]" : "opacity-0 hidden grid-rows-[0fr]"}`}>
                 {products.map(f => {
                     const productsByCategory = flatProducts.filter(m =>
                         m.category === f.name
                     );
 
-                    if (productsByCategory.length === 0) return null;
-
                     return (
-                        <div key={f.name}>
-                            <p className='font-bold text-[18px] border-b my-2'>
-                                {f.name}
-                            </p>
-                            {productsByCategory
-                                .map(p => {
-                                    return (
-                                        <p key={p.id}>
-                                            {p.name}
-                                        </p>
-                                    )
-                                })
-                            }
-
-                        </div>
+                        <InputBycat
+                            key={f.name}
+                            categoryName={f.name}
+                            currentProducts={productsByCategory}
+                        />
                     )
                 })
                 }

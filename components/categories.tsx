@@ -4,7 +4,8 @@ import { RootState } from '@/redux/makeStore'
 import { dataProducts } from '@/types/types'
 import { useAppSelector } from '@/hooks/useRedux'
 import { useEffect, useRef, useState } from 'react'
-import Link from 'next/link'
+import { clickOutside, removeCLickOut } from '@/helpers/click-outside'
+import { TransitionLink } from './transition-link'
 
 export const Categories = () => {
 
@@ -14,18 +15,14 @@ export const Categories = () => {
     const buttonRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const clickOutside = (e: MouseEvent) => {
-            if (buttonRef.current && !buttonRef.current.contains(e.target as Node)) {
-                setShowCat(false)
-            }
+
+        const handleGlobalClick = (e: MouseEvent) => {
+            clickOutside(e, buttonRef, setShowCat)
         }
 
-        document.addEventListener('mousedown', clickOutside)
-        return () => {
-            document.removeEventListener('mousedown', clickOutside)
-        }
+        return removeCLickOut(handleGlobalClick)
 
-    }, [])
+    }, [buttonRef])
 
     return (
         <div
@@ -34,7 +31,7 @@ export const Categories = () => {
 
         >
             <a
-                className='content-center y-2'
+                className='content-center y-2 cursor-pointer'
                 onClick={() => setShowCat(prev => !prev)}
             >
                 Categorias
@@ -45,13 +42,9 @@ export const Categories = () => {
                         const haveProducts = c.products.some((d: dataProducts) => d.catalog.length)
                         if (haveProducts) {
                             return (
-                                <Link
-                                    key={c.id} className="py-px px-2 whitespace-nowrap"
-                                    href={c.slug}
-                                    onClick={() => setShowCat(prev => !prev)}
-                                >
+                                <TransitionLink key={c.id} href={c.slug} setShowCat={setShowCat} className="py-px px-2 whitespace-nowrap">
                                     {c.name}
-                                </Link>
+                                </TransitionLink>
                             )
                         }
                     })}

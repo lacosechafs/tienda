@@ -7,6 +7,7 @@ import StoreProvider from "@/redux/StoreProvider";
 import { Initializer } from "@/redux/Initializer";
 import { Navbar } from "@/components/navbar/navbar";
 import { SubscribeCart } from "@/components/subscribe-cart";
+import PageWrapper from "@/components/page-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -74,7 +75,9 @@ export default async function RootLayout({
           <Initializer initialData={data} />
           <SubscribeCart />
           <Navbar />
-          {children}
+          <PageWrapper>
+            {children}
+          </PageWrapper>
         </StoreProvider>
       </body>
     </html>

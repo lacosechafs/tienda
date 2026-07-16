@@ -27,9 +27,7 @@ export const Navbar = () => {
           <Link href="#" className="content-center p-2">Contacto</Link>
           {/* Login */}
           {/* Carrito */}
-          <div className="content-center p-2">
-            <InfoCart />
-          </div>
+          <InfoCart />
           <FormSign />
         </div>
       </div>
