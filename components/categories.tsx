@@ -4,6 +4,7 @@ import { RootState } from '@/redux/makeStore'
 import { dataProducts } from '@/types/types'
 import { useAppSelector } from '@/hooks/useRedux'
 import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 
 export const Categories = () => {
 
@@ -33,7 +34,7 @@ export const Categories = () => {
 
         >
             <a
-                className='content-center p-2'
+                className='content-center y-2'
                 onClick={() => setShowCat(prev => !prev)}
             >
                 Categorias
@@ -44,13 +45,13 @@ export const Categories = () => {
                         const haveProducts = c.products.some((d: dataProducts) => d.catalog.length)
                         if (haveProducts) {
                             return (
-                                <a
+                                <Link
                                     key={c.id} className="py-px px-2 whitespace-nowrap"
                                     href={c.slug}
                                     onClick={() => setShowCat(prev => !prev)}
                                 >
                                     {c.name}
-                                </a>
+                                </Link>
                             )
                         }
                     })}

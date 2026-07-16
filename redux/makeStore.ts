@@ -3,12 +3,21 @@ import dataSlice from './dataSlice'
 import cartSlice from './cartSlice'
 
 export const makeStore = () => {
-  return configureStore({
+  const store = configureStore({
     reducer: {
       data: dataSlice,
       cart: cartSlice
     }
   })
+
+  if (typeof window !== 'undefined') {
+    store.subscribe(() => {
+      const actualState = store.getState();
+      localStorage.setItem('mi_contador', JSON.stringify(actualState.cart));
+    });
+  }
+
+  return store;
 }
 
 export type AppStore = ReturnType<typeof makeStore>

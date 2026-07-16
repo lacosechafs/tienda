@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import StoreProvider from "@/redux/StoreProvider";
 import { Initializer } from "@/redux/Initializer";
 import { Navbar } from "@/components/navbar/navbar";
+import { SubscribeCart } from "@/components/subscribe-cart";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -71,6 +72,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <StoreProvider>
           <Initializer initialData={data} />
+          <SubscribeCart />
           <Navbar />
           {children}
         </StoreProvider>

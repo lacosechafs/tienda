@@ -18,8 +18,6 @@ export const FeaturedProducts = () => {
             }))
     })
 
-    console.log(flatFeatured)
-
     return (
         <div>
             <h1>Destacados</h1>

@@ -26,9 +26,13 @@ export const QuantityInput = ({ id, size, name, haveStock, unit }: Props) => {
     const product = productsCart.find(f => f.id === id && f.size === size)
     const currentQuantity = product && product.size === size ? product.quantity : 0;
 
+    console.log(currentQuantity)
+
     useEffect(() => {
         setQuantity(currentQuantity)
     }, [currentQuantity])
+
+    console.log(productsCart)
 
     return (
         <div className="flex justify-between whitespace-nowrap items-center min-w-1/4">

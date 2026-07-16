@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-export const createClient = (request: NextRequest) => {
+export const updateSession = async (request: NextRequest) => {
     let supabaseResponse = NextResponse.next({
         request: {
             headers: request.headers,
@@ -31,6 +31,46 @@ export const createClient = (request: NextRequest) => {
             },
         },
     );
+
+    const { data: { user } } = await supabase.auth.getUser()
+
+    let dataProf = null
+
+    if (user) {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single()
+
+        if (error) {
+            console.error("Error de validación:", error)
+            return
+        }
+
+        dataProf = data
+    }
+
+    if (
+        (!user || !dataProf?.is_admin) &&
+        request.nextUrl.pathname.startsWith('/admin')
+    ) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/'
+        return NextResponse.redirect(url)
+    }
+
+    if (dataProf) {
+        const profileBase64 = btoa(JSON.stringify(dataProf))
+
+        request.headers.set('user-profile', profileBase64)
+
+        supabaseResponse = NextResponse.next({
+            request: {
+                headers: request.headers,
+            },
+        })
+    }
 
     return supabaseResponse
 };
