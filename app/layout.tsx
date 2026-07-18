@@ -8,6 +8,9 @@ import { Initializer } from "@/redux/Initializer";
 import { Navbar } from "@/components/navbar/navbar";
 import { SubscribeCart } from "@/components/subscribe-cart";
 import PageWrapper from "@/components/page-wrapper";
+import { MyCart } from "@/components/my-cart";
+import { ReactNode } from "react";
+import { AlertStock } from "@/components/alert-stock";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +30,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
 
   const cookieStore = await cookies()
@@ -36,27 +39,11 @@ export default async function RootLayout({
   const { data, error } = await supabase
     .from('categories')
     .select(`
-                id,
-                name,
-                slug,
+                *,
                 products (
-                id,
-                category_id,
-                name,
-                description,
+                *,
                 catalog (
-                    id,
-                    size,
-                    unit,
-                    public_price,
-                    bulk_stock,
-                    stored_stock,
-                    min_stock,
-                    percentage_discount,
-                    available_discount,
-                    start_discount,
-                    end_discount,
-                    featured
+                   *
                 )
                 )
             `);
@@ -76,7 +63,11 @@ export default async function RootLayout({
           <SubscribeCart />
           <Navbar />
           <PageWrapper>
-            {children}
+            <div className="@container flex w-full">
+              {children}
+              <MyCart />
+              <AlertStock />
+            </div>
           </PageWrapper>
         </StoreProvider>
       </body>

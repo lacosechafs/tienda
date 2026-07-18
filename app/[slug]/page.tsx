@@ -1,6 +1,6 @@
-import { BoxProduct } from "@/components/productCard/box-product";
+import { ListProducts } from "@/components/list-products";
 import { createClient } from "@/lib/supabase/server";
-import { dataProducts, Props } from "@/types/types";
+import { Props } from "@/types/types";
 import { cookies } from "next/headers";
 
 export default async function Page({ params }: Props) {
@@ -21,20 +21,7 @@ export default async function Page({ params }: Props) {
   }
 
   return (
-    <div className="container mx-auto gap-4 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] mt-10">
-      {category.products.map((p: dataProducts) => {
-        if (p.catalog.length === 0) return
-        return (
-          <BoxProduct
-            key={p.id}
-            {...{
-              name: p.name,
-              catalog: p.catalog,
-              id: p.id,
-            }} />
-        )
-      })}
-    </div>
+    <ListProducts products={category.products} />
   );
 }
 

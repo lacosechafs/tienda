@@ -1,19 +1,19 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import React, { ReactNode } from 'react'
+import React, { Dispatch, MouseEvent, ReactNode, SetStateAction } from 'react'
 
 interface TransitionLinkProps {
     href: string
     children: ReactNode
     className?: string
-    setShowCat: React.Dispatch<React.SetStateAction<boolean>>
+    setShowCat?: Dispatch<SetStateAction<boolean>>
 }
 
 export const TransitionLink = ({ href, children, setShowCat, className }: TransitionLinkProps) => {
     const router = useRouter()
 
-    const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const handleNavigation = (e: MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault()
 
         const pageContainer = document.getElementById('page-wrapper')
@@ -26,7 +26,7 @@ export const TransitionLink = ({ href, children, setShowCat, className }: Transi
     }
 
     return (
-        <a href={href} onClick={(e) => { handleNavigation(e); setShowCat(prev => !prev) }} className={className}>
+        <a href={href} onClick={(e) => { handleNavigation(e); setShowCat && setShowCat(prev => !prev) }} className={className}>
             {children}
         </a>
     )

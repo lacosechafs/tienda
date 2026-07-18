@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export const ProductHero = ({ ids, orderCatalog }: { ids: Array<number>, orderCatalog: Array<dataCatalog> }) => {
 
-    const product = useAppSelector((state: RootState) => state.cart.products)
+    const product = useAppSelector((state: RootState) => state.cart.products) || []
 
     const productsByCatalog = product.filter(f => ids.includes(f.id))
 
