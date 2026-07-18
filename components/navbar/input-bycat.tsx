@@ -7,8 +7,6 @@ export const InputBycat = ({
     currentProducts
 }: { categoryName: string, currentProducts: Array<dataProducts> }) => {
 
-    console.log(currentProducts)
-
     const [displayedProducts, setDisplayedProducts] = useState(currentProducts)
     const isVisible = currentProducts.length > 0
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
-import { addToCart, manualQuantity, removeToCart } from "@/redux/cartSlice";
+import { addToCart, manualQuantity, removeToCart, toggleStock } from "@/redux/cartSlice";
 import { RootState } from "@/redux/makeStore";
 import { useRef } from "react";
 
@@ -19,6 +19,7 @@ export const QuantityInput = ({ id, size, name, haveStock, unit, price, qStock }
     const dispatch = useAppDispatch();
     const value = useRef<HTMLInputElement>(null)
     const productsCart = useAppSelector((state: RootState) => state.cart.products) || []
+    const inStock = useAppSelector((state: RootState) => state.cart.stock)
     const product = productsCart.find(f => f.id === id && f.size === size)
     const currentQuantity = product && product.size === size ? product.quantity : 0;
 
@@ -50,18 +51,25 @@ export const QuantityInput = ({ id, size, name, haveStock, unit, price, qStock }
             </div>
 
             <button
-                className={`rounded-full w-6 h-6 ${currentQuantity >= qStock && qStock > 0 ? "bg-red-500" : "bg-zinc-500"}`}
+                className={`rounded-full w-6 h-6 bg-zinc-500 duration-500 ${currentQuantity >= qStock && qStock > 0 ? "opacity-50" : "opacity-100"}`}
                 onClick={() => {
                     if (currentQuantity < qStock && haveStock) {
                         dispatch(addToCart({ id, name, size, public_price: price, unit }))
+                    } else {
+                        if (currentQuantity !== 0 && !inStock) {
+
+                            dispatch(toggleStock(true))
+
+                            const timer = setTimeout(() => {
+                                dispatch(toggleStock(false))
+                            }, 4000);
+
+                            return () => clearTimeout(timer)
+                        }
                     }
                 }}
-                disabled={!haveStock || !(currentQuantity < qStock)}
             >
-                {currentQuantity >= qStock && qStock > 0
-                    ? (<p className="text-[13px]">!</p>)
-                    : (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z" /></svg>)
-                }
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z" /></svg>
             </button>
         </div>
     )
