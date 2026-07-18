@@ -1,10 +1,13 @@
+import { dataProducts } from "@/types/types"
 import { useEffect, useState } from "react"
 
 
 export const InputBycat = ({
     categoryName,
     currentProducts
-}) => {
+}: { categoryName: string, currentProducts: Array<dataProducts> }) => {
+
+    console.log(currentProducts)
 
     const [displayedProducts, setDisplayedProducts] = useState(currentProducts)
     const isVisible = currentProducts.length > 0
@@ -22,8 +25,6 @@ export const InputBycat = ({
         }
 
     }, [currentProducts, isVisible])
-
-
 
     return (
         <div className={`grid overflow-hidden duration-500 
