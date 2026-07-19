@@ -55,7 +55,20 @@ export async function signUser(e: SubmitEvent<HTMLFormElement>, dataAcc: Record<
 
         const { error } = await action(data)
 
-        if (error) throw error;
+
+        if (error) {
+            switch (error.code) {
+                case 'user_already_exists':
+                    throw new Error('Este correo ya está registrado.')
+                case 'weak_password':
+                    throw new Error('La contraseña es muy débil.')
+                case 'invalid_credentials':
+                    throw new Error('El correo o la contraseña son incorrectos.')
+                default:
+                    throw error;
+
+            }
+        }
 
         refresh(prev => !prev)
 

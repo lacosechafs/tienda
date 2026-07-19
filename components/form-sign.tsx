@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { ChangeEvent, SubmitEvent, useEffect, useRef, useState } from "react"
 import { useDispatch } from "react-redux"
 import { SignInWithPasswordCredentials } from "@supabase/supabase-js"
+import { InputUser } from "./input-user"
 
 export const FormSign = () => {
 
@@ -19,8 +20,14 @@ export const FormSign = () => {
     const [accessAccount, setAccessAccount] = useState<boolean>(false)
     const [showMenu, setShowMenu] = useState<boolean>(false)
     const [chosenOption, setChosenOption] = useState<string>('')
+    const [chosenSubMenu, setChosenSubMenu] = useState<string>('')
     const [errorUser, setErrorUser] = useState<string | null>(null)
     const [errorAnimate, setErrorAnimate] = useState<boolean>(false)
+    const [changeData, setChangeData] = useState({
+        name: "",
+        adress: "",
+        phone: ""
+    })
 
     const accountRef = useRef<HTMLDivElement>(null)
 
@@ -98,6 +105,8 @@ export const FormSign = () => {
 
     }, [errorUser])
 
+
+
     return (
         <div ref={accountRef} className="relative content-center justify-items-center min-w-15 p-2">
             <svg
@@ -131,46 +140,132 @@ export const FormSign = () => {
                                     </p>
 
                                     <button
-                                        className="cursor-pointer text-left w-full py-1 text-sm font-semibold hover:underline outline-none"
-                                        onClick={() => setChosenOption(prev => prev !== 'pass' ? 'pass' : '')}
+                                        className="cursor-pointer text-left w-full py-1 font-semibold hover:underline outline-none"
+                                        onClick={() => {
+                                            setChosenOption(prev => prev !== 'data' ? 'data' : '');
+                                            setChosenSubMenu("")
+                                        }}
                                     >
                                         Mis datos
                                     </button>
                                     <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out 
-                                        ${chosenOption === 'pass'
+                                        ${chosenOption === 'data'
                                             ? "grid-rows-[1fr] opacity-100 delay-100"
                                             : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
                                         }`}
                                     >
                                         <div className="overflow-hidden">
-                                            <div className="flex flex-col gap-2 py-2">
-                                                <input id="name" className="border px-2 py-1 text-sm rounded" placeholder={user?.[0]?.name || "Nombre (opcional)"} type="text" name="name" defaultValue={user?.[0]?.name || ""} />
-                                                <input id="adress" className="border px-2 py-1 text-sm rounded" placeholder={user?.[0]?.adress || "Dirección"} type="text" name="adress" defaultValue={user?.[0]?.adress || ""} />
-                                                <input id="phone" className="border px-2 py-1 text-sm rounded" placeholder={user?.[0]?.phone || "Teléfono"} type="text" name="phone" defaultValue={user?.[0]?.phone || ""} />
-                                                <input id="password-update" className="border px-2 py-1 text-sm rounded" placeholder="Nueva Contraseña" type="password" name="password" />
-                                                <button className="cursor-pointer bg-black text-white py-1 rounded text-sm font-semibold mt-1 outline-none">
-                                                    Guardar cambios
+                                            <div className="flex flex-col gap-2 m-2">
+                                                <InputUser user={user} type="name" placeholder="Nombre (Opcional)" border="border-t"
+                                                    icon="save" />
+                                                <InputUser user={user} type="phone" placeholder="Teléfono" border="border-y"
+                                                    icon="save" />
+
+                                                <button
+                                                    className="cursor-pointer text-left w-full py-1 font-semibold hover:underline outline-none"
+                                                    onClick={() => setChosenSubMenu(prev => prev !== 'adress' ? 'adress' : '')}
+                                                >
+                                                    Mis direcciones
                                                 </button>
+
+                                                {/*VER ESPACIO QUE OCUPA DE MAS MIS DIRECCIONES*/}
+
+                                                <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
+                                                        ${chosenSubMenu === 'adress'
+                                                        ? "grid-rows-[1fr] opacity-100 delay-100"
+                                                        : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
+                                                    }`}
+                                                >
+                                                    <div className="min-h-0">
+                                                        {user?.[0]?.adress.length > 0
+                                                            ? user?.[0]?.adress.map((a: string, i: number) => {
+
+                                                                return (
+                                                                    <div key={i} className="flex justify-between border-t border-[#ffffff50]">
+                                                                        <p className="w-4/5 content-center ms-2">{a}</p>
+                                                                        <div className="w-1/5 text-center content-center me-2">
+                                                                            <button className="p-2">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                                                    <path fill="currentColor" d="M18.36 19.78L12 13.41l-6.36 6.37l-1.42-1.42L10.59 12L4.22 5.64l1.42-1.42L12 10.59l6.36-6.36l1.41 1.41L13.41 12l6.36 6.36z" />
+                                                                                </svg>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                            : <p>No hay direcciones guardadas</p>
+                                                        }
+
+                                                        <InputUser user={user} type="" placeholder="Dirección" border="border-y"
+                                                            icon="save" />
+
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    className="cursor-pointer text-left w-full py-1 font-semibold hover:underline outline-none"
+                                                    onClick={() => setChosenSubMenu(prev => prev !== 'pass' ? 'pass' : '')}
+                                                >
+                                                    Cambiar contraseña
+                                                </button>
+                                                <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out 
+                                                        ${chosenSubMenu === 'pass'
+                                                        ? "grid-rows-[1fr] opacity-100 delay-100"
+                                                        : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
+                                                    }`}
+                                                >
+                                                    <div className="min-h-0 overflow-hidden">
+                                                        <div className="flex justify-between border-t border-[#ffffff50]">
+                                                            <input id="password-update" className="w-4/5 px-2 py-[6px] rounded outline-none" placeholder="Contraseña Anterior" type="password" name="password" />
+                                                            <div className="w-1/5 justify-items-center content-center me-2">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width="22"
+                                                                    height="22"
+                                                                    viewBox="0 0 24 24"
+                                                                    className="animate-pulse text-red-100"
+                                                                >
+                                                                    <path fill="currentColor" d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex justify-between border-t border-[#ffffff50]">
+                                                            <input id="password-update" className="w-4/5 px-2 py-[6px] rounded outline-none" placeholder="Contraseña Nueva" type="password" name="password" />
+                                                            <div className="w-1/5 justify-items-center content-center me-2">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width="22"
+                                                                    height="22"
+                                                                    viewBox="0 0 24 24"
+                                                                    className="animate-pulse text-red-100"
+                                                                >
+                                                                    <path fill="currentColor" d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex justify-between border-y border-[#ffffff50]">
+                                                            <input id="password-update" className="w-4/5 px-2 py-[6px] rounded outline-none" placeholder="Repita Contraseña Nueva" type="password" name="password" />
+                                                            <div className="w-1/5 text-center content-center me-2">
+                                                                <button className="p-2">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor" d="M5 21h14a2 2 0 0 0 2-2V8a1 1 0 0 0-.29-.71l-4-4A1 1 0 0 0 16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2m10-2H9v-5h6zM13 7h-2V5h2zM5 5h2v4h8V5h.59L19 8.41V19h-2v-5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v5H5z" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <button
-                                        className="cursor-pointer text-left w-full py-1 text-sm font-semibold hover:underline mt-2 outline-none"
+                                        className="cursor-pointer text-left w-full py-1 font-semibold hover:underline mt-2 outline-none"
                                         onClick={() => setChosenOption(prev => prev !== 'fav' ? 'fav' : '')}
                                     >
                                         Modificar mis favoritos
                                     </button>
-                                    <div className={`grid transition-[grid-template-rows] duration-500 ease-in-out ${chosenOption === 'fav' ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
-                                        <div className="overflow-hidden">
-                                            <div className="py-2">
-                                                <button className="cursor-pointer text-sm text-neutral-600 outline-none">Ir a favoritos</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <button
-                                        className="cursor-pointer text-left w-full py-1 text-sm font-semibold hover:underline mt-2 outline-none"
+                                        className="cursor-pointer text-left w-full py-1 font-semibold hover:underline mt-2 outline-none"
                                         onClick={() => setChosenOption(prev => prev !== 'hist' ? 'hist' : '')}
                                     >
                                         Historial de pedidos
@@ -178,7 +273,7 @@ export const FormSign = () => {
                                     <div className={`grid transition-[grid-template-rows] duration-500 ease-in-out ${chosenOption === 'hist' ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
                                         <div className="overflow-hidden">
                                             <div className="py-2">
-                                                <button className="cursor-pointer text-sm text-neutral-600 outline-none">Ver pedidos anteriores</button>
+                                                <button className="cursor-pointer text-neutral-600 outline-none">Ver pedidos anteriores</button>
                                             </div>
                                         </div>
                                     </div>
@@ -227,17 +322,17 @@ export const FormSign = () => {
                                             className={`relative w-full md:w-28 h-10 border rounded cursor-pointer duration-500 [transform-style:preserve-3d] transition-transform outline-none ${createAccount ? "[transform:rotateX(180deg)]" : "[transform:rotateX(0deg)]"}`}
                                             type="submit"
                                         >
-                                            <span className="absolute inset-0 flex items-center justify-center backface-hidden bg-(--background) rounded text-sm font-medium">
+                                            <span className="absolute inset-0 flex items-center justify-center backface-hidden bg-(--background) rounded font-medium">
                                                 Crear cuenta
                                             </span>
-                                            <span className="absolute inset-0 flex items-center justify-center backface-hidden bg-(--background) rounded text-sm font-medium [transform:rotateX(180deg)]">
+                                            <span className="absolute inset-0 flex items-center justify-center backface-hidden bg-(--background) rounded font-medium [transform:rotateX(180deg)]">
                                                 Acceder
                                             </span>
                                         </button>
                                     </div>
                                 </form>
 
-                                <div className="flex text-sm mt-2">
+                                <div className="flex mt-2">
                                     <p>{createAccount ? "No" : "Ya"} tienes cuenta?&nbsp;</p>
                                     <button
                                         className="cursor-pointer font-bold hover:underline bg-transparent border-0 p-0 outline-none"
@@ -250,7 +345,7 @@ export const FormSign = () => {
                                 <div className={`absolute top-full left-0 rounded-lg bg-[#fce49f] w-full min-h-8 px-3 py-2 mt-2 transition-all duration-500 shadow-md border border-[#f3d078]
                                     ${errorAnimate && !user ? "opacity-100 translate-y-0 block" : "opacity-0 -translate-y-2 pointer-events-none hidden"}`}
                                 >
-                                    <p className="text-sm text-[#714e10] font-medium">{!user && errorUser}</p>
+                                    <p className="text-[#714e10] font-medium">{!user && errorUser}</p>
                                 </div>
                             </div>
                         </div>
