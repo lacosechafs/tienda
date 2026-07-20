@@ -2,7 +2,7 @@
 
 import { clickOutside, removeCLickOut } from "@/helpers/click-outside"
 import { createClient } from "@/lib/supabase/client"
-import { signUser } from "@/components/sign-user"
+import { signUser } from "@/helpers/sign-user"
 import { setCartProducts } from "@/redux/cartSlice"
 import { useRouter } from "next/navigation"
 import { ChangeEvent, SubmitEvent, useEffect, useRef, useState } from "react"
@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux"
 import { SignInWithPasswordCredentials } from "@supabase/supabase-js"
 import { InputUser } from "./input-user"
 import { SendData } from "@/helpers/send-data"
+import { InputPass } from "./input-pass"
 
 export const FormSign = () => {
 
@@ -21,7 +22,6 @@ export const FormSign = () => {
     const [accessAccount, setAccessAccount] = useState<boolean>(false)
     const [showMenu, setShowMenu] = useState<boolean>(false)
     const [chosenOption, setChosenOption] = useState<string>('')
-    const [chosenSubMenu, setChosenSubMenu] = useState<string>('')
     const [errorUser, setErrorUser] = useState<string | null>(null)
     const [errorAnimate, setErrorAnimate] = useState<boolean>(false)
     const [changeAdress, setChangeAdress] = useState<Array<string>>([])
@@ -138,10 +138,9 @@ export const FormSign = () => {
                                     </p>
 
                                     <button
-                                        className="cursor-pointer text-left w-full py-1 font-semibold hover:underline outline-none"
+                                        className="cursor-pointer text-left w-full py-1 font-semibold hover:underline my-1 outline-none"
                                         onClick={() => {
                                             setChosenOption(prev => prev !== 'data' ? 'data' : '');
-                                            setChosenSubMenu("")
                                         }}
                                     >
                                         Mis datos
@@ -153,7 +152,7 @@ export const FormSign = () => {
                                         }`}
                                     >
                                         <div className="min-h-0">
-                                            <div className="flex flex-col m-2">
+                                            <div className="m-2">
 
                                                 <InputUser
                                                     user={user?.[0]?.name}
@@ -176,154 +175,155 @@ export const FormSign = () => {
                                                         SendData("phone", newValue, setStatus)
                                                     }}
                                                 />
-
-                                                <button
-                                                    className="cursor-pointer text-left w-full py-1 my-2 font-semibold hover:underline outline-none"
-                                                    onClick={() => setChosenSubMenu(prev => prev !== 'adress' ? 'adress' : '')}
-                                                >
-                                                    Mis direcciones
-                                                </button>
-
-                                                <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
-                                                        ${chosenSubMenu === 'adress'
-                                                        ? "grid-rows-[1fr] opacity-100 delay-100"
-                                                        : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
-                                                    }`}
-                                                >
-                                                    <div className="min-h-0">
-                                                        {changeAdress.length > 0 ? (
-                                                            changeAdress.map((a: string, i: number) => {
-                                                                const isDeleting = deletingAdress === a;
-
-                                                                return (
-                                                                    <div
-                                                                        key={a || i}
-                                                                        className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden ${isDeleting
-                                                                            ? "grid-rows-[0fr] opacity-0"
-                                                                            : "grid-rows-[1fr] opacity-100 starting:grid-rows-[0fr] starting:opacity-0"
-                                                                            }`}
-                                                                    >
-                                                                        <div className="min-h-0 flex justify-between border-t border-[#ffffff50]">
-                                                                            <p className="w-5/6 content-center ms-2">{a}</p>
-                                                                            <div className="w-1/6 text-center content-center me-2">
-                                                                                <button
-                                                                                    onClick={() => {
-                                                                                        setDeletingAdress(a);
-
-                                                                                        const actualAdress = changeAdress.filter((f) => f !== a);
-
-                                                                                        SendData("adress", actualAdress);
-
-                                                                                        setTimeout(() => {
-                                                                                            setChangeAdress(actualAdress);
-                                                                                            setDeletingAdress(null);
-                                                                                        }, 500);
-                                                                                    }}
-                                                                                    className="p-2"
-                                                                                >
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                                                        <path fill="currentColor" d="M18.36 19.78L12 13.41l-6.36 6.37l-1.42-1.42L10.59 12L4.22 5.64l1.42-1.42L12 10.59l6.36-6.36l1.41 1.41L13.41 12l6.36 6.36z" />
-                                                                                    </svg>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                );
-                                                            })
-                                                        ) : (
-                                                            <p className="p-2 text-sm opacity-70">No hay direcciones guardadas</p>
-                                                        )}
-
-                                                        <InputUser
-                                                            user={""}
-                                                            type="adress"
-                                                            placeholder="Dirección"
-                                                            border="border-y"
-                                                            icon="save"
-                                                            array={user?.[0]?.adress}
-                                                            onSave={async (newValue, setStatus) => {
-                                                                if (!newValue) return;
-
-                                                                const updatedAddresses = [...changeAdress, String(newValue)];
-
-                                                                SendData("adress", updatedAddresses, (status) => {
-                                                                    setStatus(status);
-
-                                                                    if (status === "ok") {
-                                                                        setTimeout(() => {
-                                                                            setChangeAdress(updatedAddresses);
-                                                                        }, 3000);
-                                                                    }
-                                                                });
-                                                            }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    className="cursor-pointer text-left w-full py-1 my-2 font-semibold hover:underline outline-none"
-                                                    onClick={() => setChosenSubMenu(prev => prev !== 'pass' ? 'pass' : '')}
-                                                >
-                                                    Cambiar contraseña
-                                                </button>
-                                                <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
-                                                        ${chosenSubMenu === 'pass'
-                                                        ? "grid-rows-[1fr] opacity-100 delay-100"
-                                                        : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
-                                                    }`}
-                                                >
-                                                    <div className="min-h-0">
-                                                        <div className="flex justify-between border-t border-[#ffffff50]">
-                                                            <input id="password-update" className="w-4/5 px-2 py-[6px] rounded outline-none" placeholder="Contraseña Anterior" type="password" name="password" />
-                                                            <div className="w-1/5 justify-items-center content-center me-2">
-                                                                <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    width="22"
-                                                                    height="22"
-                                                                    viewBox="0 0 24 24"
-                                                                    className="animate-pulse text-red-100"
-                                                                >
-                                                                    <path fill="currentColor" d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2" />
-                                                                </svg>
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex justify-between border-t border-[#ffffff50]">
-                                                            <input id="password-update" className="w-4/5 px-2 py-[6px] rounded outline-none" placeholder="Contraseña Nueva" type="password" name="password" />
-                                                            <div className="w-1/5 justify-items-center content-center me-2">
-                                                                <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    width="22"
-                                                                    height="22"
-                                                                    viewBox="0 0 24 24"
-                                                                    className="animate-pulse text-red-100"
-                                                                >
-                                                                    <path fill="currentColor" d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2" />
-                                                                </svg>
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex justify-between border-y border-[#ffffff50]">
-                                                            <input id="password-update" className="w-4/5 px-2 py-[6px] rounded outline-none" placeholder="Repita Contraseña Nueva" type="password" name="password" />
-                                                            <div className="w-1/5 text-center content-center me-2">
-                                                                <button className="p-2">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                                        <path fill="currentColor" d="M5 21h14a2 2 0 0 0 2-2V8a1 1 0 0 0-.29-.71l-4-4A1 1 0 0 0 16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2m10-2H9v-5h6zM13 7h-2V5h2zM5 5h2v4h8V5h.59L19 8.41V19h-2v-5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v5H5z" />
-                                                                    </svg>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        className="cursor-pointer text-left w-full pt-1 my-1 font-semibold hover:underline outline-none"
+                                        onClick={() => setChosenOption(prev => prev !== 'adress' ? 'adress' : '')}
+                                    >
+                                        Mis direcciones
+                                    </button>
+
+                                    <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
+                                                        ${chosenOption === 'adress'
+                                            ? "grid-rows-[1fr] opacity-100 delay-100"
+                                            : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
+                                        }`}
+                                    >
+                                        <div className="min-h-0">
+                                            {changeAdress.length > 0 ? (
+                                                changeAdress.map((a: string, i: number) => {
+                                                    const isDeleting = deletingAdress === a;
+
+                                                    return (
+                                                        <div
+                                                            key={a || i}
+                                                            className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden ${isDeleting
+                                                                ? "grid-rows-[0fr] opacity-0"
+                                                                : "grid-rows-[1fr] opacity-100 starting:grid-rows-[0fr] starting:opacity-0"
+                                                                }`}
+                                                        >
+                                                            <div className="min-h-0 flex justify-between border-t border-[#ffffff50]">
+                                                                <p className="w-5/6 content-center ms-2">{a}</p>
+                                                                <div className="w-1/6 text-center content-center me-2">
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            setDeletingAdress(a);
+
+                                                                            const actualAdress = changeAdress.filter((f) => f !== a);
+
+                                                                            SendData("adress", actualAdress);
+
+                                                                            setTimeout(() => {
+                                                                                setChangeAdress(actualAdress);
+                                                                                setDeletingAdress(null);
+                                                                            }, 500);
+                                                                        }}
+                                                                        className="p-2"
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                                            <path fill="currentColor" d="M18.36 19.78L12 13.41l-6.36 6.37l-1.42-1.42L10.59 12L4.22 5.64l1.42-1.42L12 10.59l6.36-6.36l1.41 1.41L13.41 12l6.36 6.36z" />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            ) : (
+                                                <p className="p-2 text-sm opacity-70">No hay direcciones guardadas</p>
+                                            )}
+
+                                            <InputUser
+                                                user={""}
+                                                type="adress"
+                                                placeholder="Dirección"
+                                                border="border-y"
+                                                icon="save"
+                                                array={user?.[0]?.adress}
+                                                onSave={async (newValue, setStatus) => {
+                                                    if (!newValue) return;
+
+                                                    const updatedAddresses = [...changeAdress, String(newValue)];
+
+                                                    SendData("adress", updatedAddresses, (status) => {
+                                                        setStatus(status);
+
+                                                        if (status === "ok") {
+                                                            setTimeout(() => {
+                                                                setChangeAdress(updatedAddresses);
+                                                            }, 3000);
+                                                        }
+                                                    });
+                                                }}
+                                            />
                                         </div>
                                     </div>
 
                                     <button
-                                        className="cursor-pointer text-left w-full py-1 font-semibold hover:underline mt-2 outline-none"
+                                        className="cursor-pointer text-left w-full pt-1 my-1 font-semibold hover:underline outline-none"
+                                        onClick={() => setChosenOption(prev => prev !== 'pass' ? 'pass' : '')}
+                                    >
+                                        Cambiar contraseña
+                                    </button>
+                                    <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
+                                                        ${chosenOption === 'pass'
+                                            ? "grid-rows-[1fr] opacity-100 delay-100"
+                                            : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
+                                        }`}
+                                    >
+                                        <div className="min-h-0">
+                                            <InputPass email={user?.[0].mail} />
+                                            {/* <div className="flex justify-between border-t border-[#ffffff50]">
+                                                    <input id="password-update" className="w-4/5 px-2 py-[6px] rounded outline-none" placeholder="Contraseña Anterior" type="password" name="password" />
+                                                    <div className="w-1/5 justify-items-center content-center me-2">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="22"
+                                                            height="22"
+                                                            viewBox="0 0 24 24"
+                                                            className="animate-pulse text-red-100"
+                                                        >
+                                                            <path fill="currentColor" d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div className="flex justify-between border-t border-[#ffffff50]">
+                                                    <input id="password-update" className="w-4/5 px-2 py-[6px] rounded outline-none" placeholder="Contraseña Nueva" type="password" name="password" />
+                                                    <div className="w-1/5 justify-items-center content-center me-2">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="22"
+                                                            height="22"
+                                                            viewBox="0 0 24 24"
+                                                            className="animate-pulse text-red-100"
+                                                        >
+                                                            <path fill="currentColor" d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div className="flex justify-between border-y border-[#ffffff50]">
+                                                    <input id="password-update" className="w-4/5 px-2 py-[6px] rounded outline-none" placeholder="Repita Contraseña Nueva" type="password" name="password" />
+                                                    <div className="w-1/5 text-center content-center me-2">
+                                                        <button className="p-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                                <path fill="currentColor" d="M5 21h14a2 2 0 0 0 2-2V8a1 1 0 0 0-.29-.71l-4-4A1 1 0 0 0 16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2m10-2H9v-5h6zM13 7h-2V5h2zM5 5h2v4h8V5h.59L19 8.41V19h-2v-5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v5H5z" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div> */}
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        className="cursor-pointer text-left w-full py-1 font-semibold hover:underline my-1 outline-none"
                                         onClick={() => setChosenOption(prev => prev !== 'fav' ? 'fav' : '')}
                                     >
                                         Modificar mis favoritos
                                     </button>
                                     <button
-                                        className="cursor-pointer text-left w-full py-1 font-semibold hover:underline mt-2 outline-none"
+                                        className="cursor-pointer text-left w-full py-1 font-semibold hover:underline my-1 outline-none"
                                         onClick={() => setChosenOption(prev => prev !== 'hist' ? 'hist' : '')}
                                     >
                                         Historial de pedidos

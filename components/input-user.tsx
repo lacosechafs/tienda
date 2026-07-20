@@ -44,6 +44,10 @@ export const InputUser = ({
 
     const isVisible = lastData !== data || changeConf !== "";
 
+    if (type === "password") {
+        console.log(iconShow, iconAnimate)
+    }
+
     return (
         <div className={`flex justify-between ${border} border-[#ffffff50]`}>
             <textarea
@@ -86,7 +90,7 @@ export const InputUser = ({
                 >
                     <svg
                         key={changeConf === "ok" ? "stable" : changeConf}
-                        className={changeConf !== "" && changeConf !== "ok" ? "animate-shake" : ""}
+                        className={`${changeConf !== "" && changeConf !== "ok" ? "animate-shake" : ""}`}
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
                         height="20"
@@ -100,11 +104,10 @@ export const InputUser = ({
                             : iconShow === "cancel"
                                 ? <path fill="currentColor" d="M5 21h14a2 2 0 0 0 2-2V8a1 1 0 0 0-.29-.71l-4-4A1 1 0 0 0 16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2m10-2H9v-5h6zM13 7h-2V5h2zM5 5h2v4h8V5h.59L19 8.41V19h-2v-5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v5H5z" />
                                 : iconShow === "alert"
-                                    ? <path className={`duration-500 ${iconAnimate
-                                        ? "opacity-0 pointer-events-none"
-                                        : "opacity-100 pointer-events-auto"}`}
-                                        fill="currentColor" d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2" />
-                                    : <path></path>
+                                && <path className={`animate-pulse duration-500 ${iconAnimate
+                                    ? "opacity-0 pointer-events-none"
+                                    : "opacity-100 pointer-events-auto"}`}
+                                    fill="currentColor" d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2" />
                         }
                     </svg>
                 </button>

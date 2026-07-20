@@ -73,4 +73,10 @@ export interface InputUserType {
     array?: Array<string>;
 }
 
+export interface InputPassType {
+    currentPass: string | number;
+    newPass: string | number;
+    status: string;
+}
+
 export type ProductPayload = Omit<SliceType, 'quantity'>
