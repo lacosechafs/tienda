@@ -9,6 +9,7 @@ import { ChangeEvent, SubmitEvent, useEffect, useRef, useState } from "react"
 import { useDispatch } from "react-redux"
 import { SignInWithPasswordCredentials } from "@supabase/supabase-js"
 import { InputUser } from "./input-user"
+import { SendData } from "@/helpers/send-data"
 
 export const FormSign = () => {
 
@@ -23,11 +24,9 @@ export const FormSign = () => {
     const [chosenSubMenu, setChosenSubMenu] = useState<string>('')
     const [errorUser, setErrorUser] = useState<string | null>(null)
     const [errorAnimate, setErrorAnimate] = useState<boolean>(false)
-    const [changeData, setChangeData] = useState({
-        name: "",
-        adress: "",
-        phone: ""
-    })
+    const [changeAdress, setChangeAdress] = useState<Array<string>>([])
+
+    const [deletingAdress, setDeletingAdress] = useState<string | null>(null);
 
     const accountRef = useRef<HTMLDivElement>(null)
 
@@ -53,7 +52,7 @@ export const FormSign = () => {
                 if (dataProf) {
                     setUser(dataProf)
                     dispatch(setCartProducts(dataProf[0].saved_cart))
-
+                    setChangeAdress([...dataProf[0].adress])
                 }
             }
         }
@@ -71,6 +70,7 @@ export const FormSign = () => {
         setUser(null)
         setDataAcc({ name: "", mail: "", password: "" })
         dispatch(setCartProducts([]))
+        setChangeAdress([])
         router.push('/')
         router.refresh()
 
@@ -104,8 +104,6 @@ export const FormSign = () => {
         return () => clearTimeout(timer)
 
     }, [errorUser])
-
-
 
     return (
         <div ref={accountRef} className="relative content-center justify-items-center min-w-15 p-2">
@@ -148,27 +146,43 @@ export const FormSign = () => {
                                     >
                                         Mis datos
                                     </button>
-                                    <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out 
+                                    <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
                                         ${chosenOption === 'data'
                                             ? "grid-rows-[1fr] opacity-100 delay-100"
                                             : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
                                         }`}
                                     >
-                                        <div className="overflow-hidden">
-                                            <div className="flex flex-col gap-2 m-2">
-                                                <InputUser user={user} type="name" placeholder="Nombre (Opcional)" border="border-t"
-                                                    icon="save" />
-                                                <InputUser user={user} type="phone" placeholder="Teléfono" border="border-y"
-                                                    icon="save" />
+                                        <div className="min-h-0">
+                                            <div className="flex flex-col m-2">
+
+                                                <InputUser
+                                                    user={user?.[0]?.name}
+                                                    type="name"
+                                                    placeholder="Nombre (Opcional)"
+                                                    border="border-t"
+                                                    icon="save"
+                                                    onSave={(newValue, setStatus) => {
+                                                        SendData("name", newValue, setStatus)
+                                                    }}
+                                                />
+
+                                                <InputUser
+                                                    user={user?.[0]?.phone}
+                                                    type="phone"
+                                                    placeholder="Teléfono"
+                                                    border="border-y"
+                                                    icon="save"
+                                                    onSave={(newValue, setStatus) => {
+                                                        SendData("phone", newValue, setStatus)
+                                                    }}
+                                                />
 
                                                 <button
-                                                    className="cursor-pointer text-left w-full py-1 font-semibold hover:underline outline-none"
+                                                    className="cursor-pointer text-left w-full py-1 my-2 font-semibold hover:underline outline-none"
                                                     onClick={() => setChosenSubMenu(prev => prev !== 'adress' ? 'adress' : '')}
                                                 >
                                                     Mis direcciones
                                                 </button>
-
-                                                {/*VER ESPACIO QUE OCUPA DE MAS MIS DIRECCIONES*/}
 
                                                 <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
                                                         ${chosenSubMenu === 'adress'
@@ -177,43 +191,87 @@ export const FormSign = () => {
                                                     }`}
                                                 >
                                                     <div className="min-h-0">
-                                                        {user?.[0]?.adress.length > 0
-                                                            ? user?.[0]?.adress.map((a: string, i: number) => {
+                                                        {changeAdress.length > 0 ? (
+                                                            changeAdress.map((a: string, i: number) => {
+                                                                const isDeleting = deletingAdress === a;
 
                                                                 return (
-                                                                    <div key={i} className="flex justify-between border-t border-[#ffffff50]">
-                                                                        <p className="w-4/5 content-center ms-2">{a}</p>
-                                                                        <div className="w-1/5 text-center content-center me-2">
-                                                                            <button className="p-2">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                                                    <path fill="currentColor" d="M18.36 19.78L12 13.41l-6.36 6.37l-1.42-1.42L10.59 12L4.22 5.64l1.42-1.42L12 10.59l6.36-6.36l1.41 1.41L13.41 12l6.36 6.36z" />
-                                                                                </svg>
-                                                                            </button>
+                                                                    <div
+                                                                        key={a || i}
+                                                                        className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden ${isDeleting
+                                                                            ? "grid-rows-[0fr] opacity-0"
+                                                                            : "grid-rows-[1fr] opacity-100 starting:grid-rows-[0fr] starting:opacity-0"
+                                                                            }`}
+                                                                    >
+                                                                        <div className="min-h-0 flex justify-between border-t border-[#ffffff50]">
+                                                                            <p className="w-5/6 content-center ms-2">{a}</p>
+                                                                            <div className="w-1/6 text-center content-center me-2">
+                                                                                <button
+                                                                                    onClick={() => {
+                                                                                        setDeletingAdress(a);
+
+                                                                                        const actualAdress = changeAdress.filter((f) => f !== a);
+
+                                                                                        SendData("adress", actualAdress);
+
+                                                                                        setTimeout(() => {
+                                                                                            setChangeAdress(actualAdress);
+                                                                                            setDeletingAdress(null);
+                                                                                        }, 500);
+                                                                                    }}
+                                                                                    className="p-2"
+                                                                                >
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                                                        <path fill="currentColor" d="M18.36 19.78L12 13.41l-6.36 6.37l-1.42-1.42L10.59 12L4.22 5.64l1.42-1.42L12 10.59l6.36-6.36l1.41 1.41L13.41 12l6.36 6.36z" />
+                                                                                    </svg>
+                                                                                </button>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                )
+                                                                );
                                                             })
-                                                            : <p>No hay direcciones guardadas</p>
-                                                        }
+                                                        ) : (
+                                                            <p className="p-2 text-sm opacity-70">No hay direcciones guardadas</p>
+                                                        )}
 
-                                                        <InputUser user={user} type="" placeholder="Dirección" border="border-y"
-                                                            icon="save" />
+                                                        <InputUser
+                                                            user={""}
+                                                            type="adress"
+                                                            placeholder="Dirección"
+                                                            border="border-y"
+                                                            icon="save"
+                                                            array={user?.[0]?.adress}
+                                                            onSave={async (newValue, setStatus) => {
+                                                                if (!newValue) return;
 
+                                                                const updatedAddresses = [...changeAdress, String(newValue)];
+
+                                                                SendData("adress", updatedAddresses, (status) => {
+                                                                    setStatus(status);
+
+                                                                    if (status === "ok") {
+                                                                        setTimeout(() => {
+                                                                            setChangeAdress(updatedAddresses);
+                                                                        }, 3000);
+                                                                    }
+                                                                });
+                                                            }}
+                                                        />
                                                     </div>
                                                 </div>
                                                 <button
-                                                    className="cursor-pointer text-left w-full py-1 font-semibold hover:underline outline-none"
+                                                    className="cursor-pointer text-left w-full py-1 my-2 font-semibold hover:underline outline-none"
                                                     onClick={() => setChosenSubMenu(prev => prev !== 'pass' ? 'pass' : '')}
                                                 >
                                                     Cambiar contraseña
                                                 </button>
-                                                <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out 
+                                                <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
                                                         ${chosenSubMenu === 'pass'
                                                         ? "grid-rows-[1fr] opacity-100 delay-100"
                                                         : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
                                                     }`}
                                                 >
-                                                    <div className="min-h-0 overflow-hidden">
+                                                    <div className="min-h-0">
                                                         <div className="flex justify-between border-t border-[#ffffff50]">
                                                             <input id="password-update" className="w-4/5 px-2 py-[6px] rounded outline-none" placeholder="Contraseña Anterior" type="password" name="password" />
                                                             <div className="w-1/5 justify-items-center content-center me-2">
@@ -305,7 +363,7 @@ export const FormSign = () => {
                                             name="name"
                                             type="text"
                                             placeholder="Nombre (opcional)"
-                                            value={dataAcc.name}
+                                            value={dataAcc.name || ""}
                                             onChange={handleChange}
                                             className={`px-2 rounded border overflow-hidden duration-500 transition-all text-sm
                                                 ${!createAccount
@@ -313,8 +371,8 @@ export const FormSign = () => {
                                                     : "h-0 border-y-0 py-0 opacity-0 pointer-events-none"
                                                 }`}
                                         />
-                                        <input id="mail" name="mail" type="email" className="border px-2 py-1 rounded text-sm" placeholder="Email" value={dataAcc.mail} onChange={handleChange} />
-                                        <input id="password" name="password" type="password" className="border px-2 py-1 rounded text-sm" placeholder="Contraseña" value={dataAcc.password} onChange={handleChange} />
+                                        <input id="mail" name="mail" type="email" className="border px-2 py-1 rounded text-sm" placeholder="Email" value={dataAcc.mail || ""} onChange={handleChange} />
+                                        <input id="password" name="password" type="password" className="border px-2 py-1 rounded text-sm" placeholder="Contraseña" value={dataAcc.password || ""} onChange={handleChange} />
                                     </div>
 
                                     <div className="self-center text-center w-full md:w-28 [perspective:1000px]">
@@ -352,6 +410,6 @@ export const FormSign = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }

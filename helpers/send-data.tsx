@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/client"
-import { SetStateAction } from "react"
 
-export const SendData = async (type: string, value: string | null, setChangeConf: (value: string) => void) => {
+export const SendData = async (type: string, value: string | number | null | Array<string>, setStatus?: (value: string) => void) => {
 
   const supabase = createClient()
 
@@ -17,10 +16,10 @@ export const SendData = async (type: string, value: string | null, setChangeConf
     .eq('id', data.user.id)
 
   if (error) {
-    setChangeConf(error.message)
+    setStatus?.(error.message)
     return
   }
 
-  setChangeConf("ok")
+  setStatus?.("ok")
 
 }

@@ -63,4 +63,14 @@ export interface SliceType {
     public_price?: number;
 }
 
+export interface InputUserType {
+    user: string | number;
+    type: string;
+    placeholder: string;
+    border: string;
+    icon: string;
+    onSave: (newValue: string | Array<string> | number, setStatus: (value: string) => void) => void;
+    array?: Array<string>;
+}
+
 export type ProductPayload = Omit<SliceType, 'quantity'>
