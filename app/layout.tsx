@@ -63,7 +63,7 @@ export default async function RootLayout({
           <SubscribeCart />
           <Navbar />
           <PageWrapper>
-            <div className="@container flex w-full">
+            <div className="flex w-full h-full justify-center">
               {children}
               <MyCart />
               <AlertStock />

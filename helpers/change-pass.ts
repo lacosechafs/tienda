@@ -41,13 +41,13 @@ const translateSupabaseError = (message: string): string => {
     }
 }
 
-export const ChangePass = async (
+const supabase = createClient()
+
+export const verifyCurrentPass = async (
     email: string,
     currentPass: string,
-    newPass: string,
     status: (msg: string) => void
 ) => {
-    const supabase = createClient()
 
     const { error: currentError } = await supabase.auth.signInWithPassword({
         email: email,
@@ -55,9 +55,16 @@ export const ChangePass = async (
     })
 
     if (currentError) {
+        console.log(currentError.message)
         status(translateSupabaseError(currentError.message))
         return
     }
+
+}
+export const ChangePass = async (
+    newPass: string,
+    status: (msg: string) => void
+) => {
 
     const { error: actualError } = await supabase.auth.updateUser({
         password: newPass

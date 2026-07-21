@@ -11,7 +11,7 @@ import { TransitionLink } from "../transition-link"
 export const Navbar = () => {
 
   return (
-    <div className="sticky top-0 left-0 w-full bg-(--background) text-(--foreground) z-9">
+    <div className="sticky top-0 left-0 w-full bg-(--backgroundlt) text-(--foreground) z-9">
       <div className="container-md mx-auto flex justify-around max-w-screen-lg relative">
         <TransitionLink href="/">
           <Image
