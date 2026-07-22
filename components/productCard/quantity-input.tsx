@@ -36,7 +36,7 @@ export const QuantityInput = ({ id, size, name, haveStock, unit, price, qStock }
             </button>
 
             <div className="relative flex items-center">
-                <input
+                {/* <input
                     id={id.toString()}
                     placeholder="1"
                     ref={value}
@@ -47,7 +47,8 @@ export const QuantityInput = ({ id, size, name, haveStock, unit, price, qStock }
                     }}
                     disabled={!haveStock}
                     className="text-white text-center min-w-5 h-fit field-sizing-content"
-                />
+                /> */}
+                <div className="px-2">{currentQuantity}</div>
             </div>
 
             <button

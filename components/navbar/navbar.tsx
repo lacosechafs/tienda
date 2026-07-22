@@ -17,7 +17,7 @@ export const Navbar = () => {
           <Image
             src={logo}
             alt="Diferentes frutos secos cubiertos de miel, nombre de empresa y slogan"
-            className="h-auto max-h-[60px] w-auto"
+            className="h-auto max-h-[60px] w-auto p-1"
             loading="eager"
           />
         </TransitionLink>
@@ -26,9 +26,9 @@ export const Navbar = () => {
         <div className="flex justify-between w-1/5 min-w-55">
           {/* Contacto */}
           <Link href="#" className="content-center p-2">Contacto</Link>
-          {/* Login */}
           {/* Carrito */}
           <InfoCart />
+          {/* Login */}
           <FormSign />
         </div>
       </div>

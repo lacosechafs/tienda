@@ -5,20 +5,25 @@ import { BoxProduct } from "./productCard/box-product"
 
 export const ListProducts = ({ products, title }: { products: Array<dataProductsPartial>, title?: string }) => {
 
-    return (
-        <div className='w-full max-w-[calc(100%-350px)] mt-10'>
-            {title &&
-                <h1>{title}</h1>
-            }
-            <div className="gap-4 grid grid-cols-[repeat(auto-fit,minmax(min(100%,270px),1fr))] max-w-full [grid-template-columns:repeat(auto-fit,minmax(max(270px,calc(25%-1rem)),1fr))]">
-                {products.map(m => {
-                    if (!m.show_product) return
+    const visibleProducts = products.filter(m => m.show_product && m.catalog.length);
 
-                    return (
-                        <BoxProduct catalog={m.catalog} name={m.name} id={m.id} key={m.id} />
-                    )
-                })}
+    if (!visibleProducts.length) return
+
+    return (
+        <div>
+            {title && (
+                <h1 className="text-2xl font-bold mb-4">{title}</h1>
+            )}
+            <div className="grid [grid-template-columns:repeat(auto-fill,minmax(270px,1fr))] gap-4 max-w-full">
+                {visibleProducts.map(m => (
+                    <BoxProduct
+                        key={m.id}
+                        catalog={m.catalog}
+                        name={m.name}
+                        title={title || ""}
+                    />
+                ))}
             </div>
         </div>
-    )
+    );
 }

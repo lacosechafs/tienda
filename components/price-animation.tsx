@@ -4,7 +4,7 @@ import { RootState } from '@/redux/makeStore'
 import { dataCatalog } from '@/types/types'
 import { SelectorNumber } from '@/components/productCard/selectorNumber'
 
-export const PriceAnimate = ({ cartProducts, delay }: { cartProducts: Array<dataCatalog>, delay?: number }) => {
+export const PriceAnimate = ({ cartProducts, fontSize, delay, title }: { cartProducts: Array<dataCatalog>, fontSize: number, delay?: number, title?: string }) => {
 
     const productsInCart = useAppSelector((state: RootState) => state.cart.products) || []
 
@@ -13,37 +13,43 @@ export const PriceAnimate = ({ cartProducts, delay }: { cartProducts: Array<data
     const fullArray = [...new Array((formatedNum.length <= 5 ? 5 - formatedNum.length : 0)).fill("0"), ...formatedNum]
 
     return (
-        <div className="flex h-5 overflow-hidden">
-            $
-            {fullArray.map((num: string, i: number) => {
-                const indexDot = fullArray.length - 4
+        <div>
+            <h2>{title}</h2>
+            <div className={`flex overflow-hidden`}
+                style={{ height: `calc(${fontSize + (fontSize / 2)}px)`, fontSize: `${fontSize}px` }}
+            >
+                $
+                {fullArray.map((num: string, i: number) => {
+                    const indexDot = fullArray.length - 4
 
-                if (num === '.' || num === ',') {
+                    if (num === '.' || num === ',') {
+                        return (
+                            <span key={`sep-${i}`} className="separator text-center">
+                                {num}
+                            </span>
+                        );
+                    }
+                    if (i === indexDot) {
+                        return (
+                            <span key={`sep-${i}`} className="separator text-center">
+                                .
+                            </span>
+                        );
+                    }
+
+                    const digit = parseInt(num, 10)
+
                     return (
-                        <span key={`sep-${i}`} className="separator w-[9px] text-center">
-                            {num}
-                        </span>
-                    );
+                        <SelectorNumber
+                            key={`digit-${fullArray.length - i}`}
+                            digit={digit}
+                            delay={delay}
+                            fontSize={fontSize}
+                        />
+                    )
+                })
                 }
-                if (i === indexDot) {
-                    return (
-                        <span key={`sep-${i}`} className="separator w-[9px] text-center">
-                            .
-                        </span>
-                    );
-                }
-
-                const digit = parseInt(num, 10)
-
-                return (
-                    <SelectorNumber
-                        key={`digit-${fullArray.length - i}`}
-                        digit={digit}
-                        delay={delay}
-                    />
-                )
-            })
-            }
+            </div>
         </div>
 
     )

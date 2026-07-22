@@ -4,15 +4,16 @@ export interface Props {
 
 export interface dataCatalog {
     available_discount: boolean;
-    end_discount: string | null;
+    end_discount: string | null | Date;
     id: number;
     percentage_discount: number;
     public_price: number;
     size: number;
-    start_discount: string | null;
+    start_discount: string | null | Date;
     min_stock: number;
     unit: string;
     bulk_stock: number;
+    product_id: number;
     stored_stock: number;
     featured: boolean;
     visible: boolean;

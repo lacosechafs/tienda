@@ -120,8 +120,8 @@ export const FormSign = () => {
 
             <div
                 className={`absolute right-0 top-[calc(100%-8px)] border rounded-lg p-3 min-w-95 w-full bg-(--background) z-50
-                            grid transition-all duration-500 ease-in-out grid-rows-[1fr]
-                            ${showMenu ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}
+                            grid transition-discrete duration-500 ease-in-out grid-rows-[1fr]
+                            ${showMenu ? "opacity-100 scale-100 block starting:opacity-0" : "opacity-0 scale-95 pointer-events-none hidden"}`}
             >
                 <div className="overflow-hidden">
                     <div>

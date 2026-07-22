@@ -65,6 +65,8 @@ export const MyCart = () => {
     return myCart.products.filter(f => !productsStock.has(f.id))
   }, [myCart.products, productsStock])
 
+  console.log(lastCart)
+
   const currentCartIds = useMemo(() => new Set(myCart.products.map(p => p.id)), [myCart.products])
 
   return (
@@ -75,11 +77,6 @@ export const MyCart = () => {
 
       <div className={`absolute bg-(--backgroundlt) right-0 p-2 justify-end duration-1000 transition-discrete  h-[calc(100dvh-60px)] ${myCart.isOpen ? "w-[350px] opacity-100 starting:opacity-0 starting:w-0" : "w-0 opacity-0"}`}>
         <div className="sticky top-15 whitespace-nowrap overflow-hidden">
-
-          {/* 
-        <div className={`relative duration-1000 transition-discrete ${myCart.isOpen ? "w-[350px] starting:w-0" : "w-0 delay-500"}`}>
-      <div className={`sticky top-15 whitespace-nowrap overflow-hidden duration-500 ${myCart.isOpen ? "opacity-100 starting:opacity-0 delay-1000" : "opacity-0"}`}>
-         */}
           <h2 className="mb-2">Carrito de compras</h2>
           {lastCart?.map((m: ArrayProduct) => {
             const withoutStock = productsStock.has(m.id)
@@ -108,7 +105,7 @@ export const MyCart = () => {
                     <div className="flex justify-between mb-2">
                       {withoutStock
                         ? <p>No disponible</p>
-                        : <PriceAnimate cartProducts={[m]} delay={lastCart.length !== myCart.products.length ? 1600 : 0} />
+                        : <PriceAnimate cartProducts={[m]} fontSize={20} delay={lastCart.length !== myCart.products.length ? 1600 : 0}  title="Subtotal"/>
                       }
                       <div className="flex">
                         <button className="me-3" onClick={() => dispatch(removeToCart({ id: m.id, name: m.name, size: m.size, quantity: m.quantity }))}>
@@ -151,10 +148,7 @@ export const MyCart = () => {
             )
           })}
           <div className={`flex duration-500 overflow-hidden ${myCart.isOpen ? "px-2 starting:px-0" : "px-0"}`}>
-            <p className="me-1">
-              Total:
-            </p>
-            <PriceAnimate cartProducts={productsNoStock} delay={lastCart.length !== myCart.products.length ? 600 : 0} />
+            <PriceAnimate cartProducts={productsNoStock} fontSize={20} delay={lastCart.length !== myCart.products.length ? 600 : 0} title="Total" />
           </div>
         </div>
       </div>

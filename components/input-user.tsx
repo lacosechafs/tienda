@@ -44,10 +44,6 @@ export const InputUser = ({
 
     const isVisible = lastData !== data || changeConf !== "";
 
-    if (type === "password") {
-        console.log(iconShow, iconAnimate)
-    }
-
     return (
         <div className={`flex justify-between ${border} border-[#ffffff50]`}>
             <textarea
