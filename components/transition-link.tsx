@@ -1,7 +1,7 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import React, { Dispatch, MouseEvent, ReactNode, SetStateAction } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { Dispatch, MouseEvent, ReactNode, SetStateAction } from 'react'
 
 interface TransitionLinkProps {
     href: string
@@ -12,9 +12,12 @@ interface TransitionLinkProps {
 
 export const TransitionLink = ({ href, children, setShowCat, className }: TransitionLinkProps) => {
     const router = useRouter()
+    const pathname = usePathname()
 
     const handleNavigation = (e: MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault()
+
+        if (pathname === (href === "/" ? "/" : `/${href}`)) return
 
         const pageContainer = document.getElementById('page-wrapper')
         if (pageContainer) {

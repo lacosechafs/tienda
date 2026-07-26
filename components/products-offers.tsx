@@ -9,8 +9,6 @@ export const ProductsOffers = () => {
 
     const products = useAppSelector((state: RootState) => state.data.products)
 
-    const offersDeadLine = new Date().getTime()
-
     const flatOffers = products.flatMap(m => {
         return m.products.filter((f: dataProducts) => f.catalog.some(s => {
             if (!s.end_discount || !s.start_discount) return
@@ -28,9 +26,6 @@ export const ProductsOffers = () => {
                 show_product: x.show_product
             }))
     }) || []
-
-    // console.log(today)
-    // console.log(flatOffers)
 
     return (
         <ListProducts products={flatOffers} title="Ofertas" />

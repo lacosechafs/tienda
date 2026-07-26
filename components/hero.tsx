@@ -2,7 +2,7 @@
 export const Hero = () => {
   return (
     <div>
-        <h1>Bienvenido a La Cosecha</h1>
+      <h1>Productos bla bla bla</h1>
     </div>
   )
 }

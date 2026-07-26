@@ -62,13 +62,13 @@ export default async function RootLayout({
           <Initializer initialData={data} />
           <SubscribeCart />
           <Navbar />
-          <PageWrapper>
-            <div className="flex w-full h-full justify-center">
+          <div className="flex w-full min-h-screen justify-center overflow-x-hidden">
+            <PageWrapper>
               {children}
-              <MyCart />
               <AlertStock />
-            </div>
-          </PageWrapper>
+            </PageWrapper>
+            <MyCart />
+          </div>
         </StoreProvider>
       </body>
     </html>

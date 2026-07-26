@@ -106,7 +106,7 @@ export const FormSign = () => {
     }, [errorUser])
 
     return (
-        <div ref={accountRef} className="relative content-center justify-items-center min-w-15 p-2">
+        <div ref={accountRef} className="relative content-center justify-items-center m-2">
             <svg
                 className="cursor-pointer"
                 onClick={() => setShowMenu(prev => !prev)}

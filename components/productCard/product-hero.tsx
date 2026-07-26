@@ -12,7 +12,7 @@ export const ProductHero = ({ ids, orderCatalog }: { ids: Array<number>, orderCa
     const productsByCatalog = product.filter(f => ids.includes(f.id))
 
     return (
-        <div className="relative">
+        <div className="hidden md:block relative">
             <Image
                 src={logo}
                 alt="Imagen productos"

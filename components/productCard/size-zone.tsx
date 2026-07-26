@@ -23,9 +23,9 @@ export const SizeZone = ({
         >
             <p>
                 {size + unit}
-            </p>
-            <p className="ms-1 opacity-80">
-                ({haveStock ? `$${price.toLocaleString('es-ES', { useGrouping: 'always' })}` : "Sin stock"})
+                <span className="ms-1 opacity-80">
+                    (${price.toLocaleString('es-ES', { useGrouping: 'always' })})
+                </span>
             </p>
         </div >
 

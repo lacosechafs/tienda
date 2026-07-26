@@ -24,7 +24,7 @@ export const QuantityInput = ({ id, size, name, haveStock, unit, price, qStock }
     const currentQuantity = product && product.size === size ? product.quantity : 0;
 
     return (
-        <div className="flex justify-between whitespace-nowrap items-center min-w-1/4">
+        <div className={`flex justify-between whitespace-nowrap items-center min-w-1/4`}>
             <button
                 className="rounded-full w-6 h-6 bg-zinc-500"
                 onClick={() => {
@@ -36,18 +36,6 @@ export const QuantityInput = ({ id, size, name, haveStock, unit, price, qStock }
             </button>
 
             <div className="relative flex items-center">
-                {/* <input
-                    id={id.toString()}
-                    placeholder="1"
-                    ref={value}
-                    value={!haveStock ? 0 : currentQuantity || 0}
-                    onChange={() => {
-                        const q = value.current ? parseInt(value.current.value, 10) : 0;
-                        dispatch(manualQuantity({ id, name, size, quantity: q || 0 }))
-                    }}
-                    disabled={!haveStock}
-                    className="text-white text-center min-w-5 h-fit field-sizing-content"
-                /> */}
                 <div className="px-2">{currentQuantity}</div>
             </div>
 

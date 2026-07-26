@@ -18,21 +18,15 @@ export const MyCart = () => {
 
   const [lastCart, setLastCart] = useState<Array<ArrayProduct>>([])
 
+  // Sincronizamos lastCart con retraso SOLO cuando se elimina un ítem
   useEffect(() => {
-    if (!lastCart.length) {
-      setLastCart(myCart.products)
-      return
-    }
-
-    if (lastCart.length === myCart.products.length) {
-      setLastCart(myCart.products)
-      return
-    } else {
+    if (lastCart.length > myCart.products.length) {
       const timer = setTimeout(() => {
         setLastCart(myCart.products)
-      }, lastCart.length > myCart.products.length ? 500 : 10);
-
+      }, 500) // Coincide con la duración de la animación (500ms)
       return () => clearTimeout(timer)
+    } else {
+      setLastCart(myCart.products)
     }
   }, [myCart.products])
 
@@ -65,90 +59,182 @@ export const MyCart = () => {
     return myCart.products.filter(f => !productsStock.has(f.id))
   }, [myCart.products, productsStock])
 
-  console.log(lastCart)
-
   const currentCartIds = useMemo(() => new Set(myCart.products.map(p => p.id)), [myCart.products])
+
+  const groupByProduct = Object.entries(Object.groupBy(lastCart, f => f.name)).map(([key, value]) => ({
+    [key]: value
+  }))
 
   return (
     <>
       <div
-        className={`flex h-full relative duration-1000 transition-discrete ${myCart.isOpen ? "w-[350px] opacity-100 starting:opacity-0 starting:w-0" : "w-0 opacity-0"}`}>
-      </div>
+        className={`hidden md:block shrink-0 transition-all duration-1000 ease-in-out pointer-events-none ${
+          myCart.isOpen ? "w-screen md:w-[350px]" : "w-0"
+        }`}
+      />
+      <div
+        className={`fixed top-[60px] right-0 h-[calc(100vh-60px)] z-50 transition-all duration-1000 ease-in-out ${
+          myCart.isOpen ? "w-screen md:w-[350px] opacity-100" : "w-0 opacity-0 pointer-events-none"
+        }`}
+      >
+        <div className="flex flex-col w-screen md:w-[350px] h-full max-h-[calc(100vh-60px)] overflow-y-auto bg-(--backgroundlt)">
+          <h2 className="my-2 whitespace-nowrap px-2">Carrito de compras</h2>
+          <div className="overflow-y-scroll scrollbar-thin flex-1">
+            {groupByProduct.length > 0 &&
+              groupByProduct?.map((p) => {
+                const [productName, variants] = Object.entries(p)[0]
+                const isGroupActive = variants?.some((item) => currentCartIds.has(item.id))
 
-      <div className={`absolute bg-(--backgroundlt) right-0 p-2 justify-end duration-1000 transition-discrete  h-[calc(100dvh-60px)] ${myCart.isOpen ? "w-[350px] opacity-100 starting:opacity-0 starting:w-0" : "w-0 opacity-0"}`}>
-        <div className="sticky top-15 whitespace-nowrap overflow-hidden">
-          <h2 className="mb-2">Carrito de compras</h2>
-          {lastCart?.map((m: ArrayProduct) => {
-            const withoutStock = productsStock.has(m.id)
-            const isDeleted = !currentCartIds.has(m.id)
+                return (
+                  <div key={productName} className="px-2">
+                    {/* SIN clase starting: para evitar el refresh al reestructurar el grupo */}
+                    <div
+                      className={`transition-all duration-500 grid overflow-hidden ${
+                        !isGroupActive
+                          ? "grid-rows-[0fr] opacity-0 pointer-events-none py-0 border-none"
+                          : "grid-rows-[1fr] py-2 opacity-100"
+                      }`}
+                    >
+                      <div className="min-h-0">
+                        <div className="flex border-t pt-3 justify-between text-[20px]">
+                          {productName}
+                        </div>
 
-            const calculatedQStock = stockMap.get(`${m.id}-${m.size}`) || 0
+                        {variants
+                          ?.sort((a, b) => {
+                            const valueA = a.unit === "kg" ? a.size * 1000 : a.size
+                            const valueB = b.unit === "kg" ? b.size * 1000 : b.size
+                            return valueB - valueA
+                          })
+                          .map((m, i) => {
+                            const isDeleted = !currentCartIds.has(m.id)
+                            const withoutStock = productsStock.has(m.id)
+                            const calculatedQStock = stockMap.get(`${m.id}-${m.size}`) || 0
 
-            return (
-              <div
-                key={m.id}
-                className={`transition-discrete duration-500 grid overflow-hidden ${isDeleted
-                  ? "opacity-0 pointer-events-none scale-95 border-transparent mb-0 py-0 grid-rows-[0fr] border-none"
-                  : "grid-rows-[1fr] py-2 border-t starting:opacity-0 starting:grid-rows-[0fr] starting:mb-0 starting:py-0 starting:border-none"
-                  } ${withoutStock ? "opacity-50 text-red-200" : "opacity-100"}`}
-              >
-                <div className="min-h-0">
-                  <div className="px-2">
-                    <div>
-                      <p>
-                        {m.name}
-                      </p>
-                    </div>
-                    <p>
-                      {m.size}{m.unit}
-                    </p>
-                    <div className="flex justify-between mb-2">
-                      {withoutStock
-                        ? <p>No disponible</p>
-                        : <PriceAnimate cartProducts={[m]} fontSize={20} delay={lastCart.length !== myCart.products.length ? 1600 : 0}  title="Subtotal"/>
-                      }
-                      <div className="flex">
-                        <button className="me-3" onClick={() => dispatch(removeToCart({ id: m.id, name: m.name, size: m.size, quantity: m.quantity }))}>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z" />
-                          </svg>
-                        </button>
-                        {!withoutStock &&
-                          <QuantityInput
-                            id={m.id}
-                            size={m.size}
-                            name={m.name}
-                            haveStock={true}
-                            unit={m.unit}
-                            price={m.public_price}
-                            qStock={calculatedQStock}
-                          />
-                        }
-                      </div>
-                    </div>
-                    <div className={`flex grid transition-discrete duration-500 overflow-hidden ${calculatedQStock < m.quantity ? "grid-rows-[1fr] starting:grid-rows-[0fr]" : "grid-rows-[0fr]"}`}>
-                      <div className="min-h-0 flex">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="22"
-                          height="22"
-                          viewBox="0 0 24 24"
-                          className="flex-shrink-0 animate-pulse text-red-100"
-                        >
-                          <path fill="currentColor" d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2" />
-                        </svg>
-                        <p className="ms-1 text-red-600">
-                          Stock disponible: {calculatedQStock}
-                        </p>
+                            return (
+                              <div
+                                key={m.id}
+                                className={`transition-all duration-500 grid overflow-hidden ${
+                                  isDeleted
+                                    ? "grid-rows-[0fr] opacity-0 pointer-events-none py-0 border-none border-[transparent]"
+                                    : `grid-rows-[1fr] starting:grid-rows-[0fr] py-2 ${
+                                        i !== 0 && "border-t border-gray-800" 
+                                      }`
+                                } ${withoutStock ? "opacity-50 text-red-200" : "opacity-100"}`}
+                              >
+                                <div className="min-h-0">
+                                  <div className="px-2">
+                                    <div className="flex flex-row justify-between">
+                                      <p className="me-2 text-[18px] whitespace-nowrap">
+                                        {m.size}
+                                        {m.unit}
+                                      </p>
+                                      <div className="flex">
+                                        <div className="flex">
+                                          {!withoutStock ? (
+                                            <div className="flex">
+                                              <div className="me-5">
+                                                <QuantityInput
+                                                  id={m.id}
+                                                  size={m.size}
+                                                  name={m.name}
+                                                  haveStock={true}
+                                                  unit={m.unit}
+                                                  price={m.public_price}
+                                                  qStock={calculatedQStock}
+                                                />
+                                              </div>
+                                              <div className="min-w-[76px] flex justify-end">
+                                                <PriceAnimate
+                                                  cartProducts={[m]}
+                                                  fontSize={18}
+                                                  delay={0}
+                                                />
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            <div className="flex">
+                                              <p className="whitespace-nowrap">No disponible</p>
+                                              <button
+                                                className="me-3"
+                                                onClick={() =>
+                                                  dispatch(
+                                                    removeToCart({
+                                                      id: m.id,
+                                                      name: m.name,
+                                                      size: m.size,
+                                                      quantity: m.quantity,
+                                                    })
+                                                  )
+                                                }
+                                              >
+                                                <svg
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  width="20"
+                                                  height="20"
+                                                  viewBox="0 0 24 24"
+                                                >
+                                                  <path
+                                                    fill="currentColor"
+                                                    d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
+                                                  />
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Alerta de Stock */}
+                                    <div
+                                      className={`flex grid transition-all duration-500 overflow-hidden ${
+                                        calculatedQStock < m.quantity
+                                          ? "grid-rows-[1fr]"
+                                          : "grid-rows-[0fr]"
+                                      }`}
+                                    >
+                                      <div className="min-h-0 flex">
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="22"
+                                          height="22"
+                                          viewBox="0 0 24 24"
+                                          className="flex-shrink-0 animate-pulse text-red-100"
+                                        >
+                                          <path
+                                            fill="currentColor"
+                                            d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2"
+                                          />
+                                        </svg>
+                                        <p className="ms-1 text-red-600 whitespace-nowrap">
+                                          Stock disponible: {calculatedQStock}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })}
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            )
-          })}
-          <div className={`flex duration-500 overflow-hidden ${myCart.isOpen ? "px-2 starting:px-0" : "px-0"}`}>
-            <PriceAnimate cartProducts={productsNoStock} fontSize={20} delay={lastCart.length !== myCart.products.length ? 600 : 0} title="Total" />
+                )
+              })}
+          </div>
+
+          <div
+            className={`flex duration-500 mt-2 py-2 justify-between border-t ${
+              myCart.isOpen ? "px-2" : "px-0"
+            }`}
+          >
+            <p className="text-[24px] whitespace-nowrap">TOTAL</p>
+            <PriceAnimate
+              cartProducts={productsNoStock}
+              fontSize={24}
+              delay={0}
+            />
           </div>
         </div>
       </div>
