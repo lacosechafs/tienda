@@ -16,7 +16,7 @@ export const ListCategories = ({ showCat, setShowCat }: { showCat: boolean, setS
                         const haveProducts = c.products.some((d: dataProducts) => d.catalog.length)
                         if (haveProducts) {
                             return (
-                                <TransitionLink key={c.id} href={c.slug} setShowCat={setShowCat} className="text-[#fea70e] bg-(--background) py-px px-2 mx-2 whitespace-nowrap border w-fit rounded-full mt-5">
+                                <TransitionLink key={c.id} href={c.slug} setShowCat={setShowCat} className="text-[#fea70e] bg-(--background) px-2 me-1 md:me-2 whitespace-nowrap border w-fit rounded-full mt-5">
                                     {c.name}
                                 </TransitionLink>
                             )

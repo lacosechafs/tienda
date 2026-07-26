@@ -9,8 +9,6 @@ export const Initializer = ({ initialData }: { initialData: any[] }) => {
     const dispatch = useAppDispatch();
     const initialized = useRef(false)
 
-    console.log(initialData)
-
     useEffect(() => {
         if (!initialized.current) {
             dispatch(setData(initialData))

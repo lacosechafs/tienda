@@ -1,22 +1,27 @@
 "use client"
 
-import { useAppStore } from '@/hooks/useRedux'
+import { useAppDispatch, useAppStore } from '@/hooks/useRedux'
 import { createClient } from '@/lib/supabase/client'
+import { setCartProducts } from '@/redux/cartSlice'
 import { RootState } from '@/redux/makeStore'
 import { useEffect, useRef, useState } from 'react'
 
 export const SubscribeCart = () => {
     const store = useAppStore()
     const supabase = createClient()
+    const dispatch = useAppDispatch()
 
     const [isFullyLoaded, setIsFullyLoaded] = useState(false)
+    const [userLogged, setUserLogged] = useState("")
     const lastSavedStateRef = useRef<any>(null)
 
     useEffect(() => {
         async function fetchInitialCart() {
             try {
                 const { data: { user } } = await supabase.auth.getUser()
+
                 if (user) {
+                    setUserLogged(user.id)
                     const { data } = await supabase
                         .from('profiles')
                         .select('saved_cart')
@@ -25,6 +30,14 @@ export const SubscribeCart = () => {
 
                     if (data?.saved_cart) {
                         lastSavedStateRef.current = data.saved_cart
+                        dispatch(setCartProducts(data.saved_cart))
+                    }
+                } else {
+                    const localCart = window.localStorage.getItem('cart')
+                    if (localCart) {
+                        const parsedCart = JSON.parse(localCart)
+                        lastSavedStateRef.current = parsedCart
+                        dispatch(setCartProducts(parsedCart))
                     }
                 }
             } catch (error) {
@@ -35,7 +48,7 @@ export const SubscribeCart = () => {
         }
 
         fetchInitialCart()
-    }, [store, supabase])
+    }, [supabase, dispatch])
 
     useEffect(() => {
         if (!isFullyLoaded) return
@@ -51,23 +64,27 @@ export const SubscribeCart = () => {
             lastSavedStateRef.current = dataToSync
 
             try {
-                const { data: { user } } = await supabase.auth.getUser()
-                if (!user) return
+                if (!userLogged) {
+                    if (dataToSync) {
+                        window.localStorage.setItem('cart', JSON.stringify(dataToSync))
+                    }
+                    return
+                }
 
                 await supabase
                     .from('profiles')
                     .update({ saved_cart: dataToSync })
-                    .eq('id', user.id)
+                    .eq('id', userLogged)
 
             } catch (error) {
-                console.error('Error al guardar productos en la base:', error)
+                console.error('Error al guardar productos:', error)
             }
         })
 
         return () => {
             unsubscribe()
         }
-    }, [store, supabase, isFullyLoaded])
+    }, [store, supabase, isFullyLoaded, userLogged])
 
     return null
 }
