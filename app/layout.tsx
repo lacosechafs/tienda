@@ -7,10 +7,8 @@ import StoreProvider from "@/redux/StoreProvider";
 import { Initializer } from "@/redux/Initializer";
 import { Navbar } from "@/components/navbar/navbar";
 import { SubscribeCart } from "@/components/subscribe-cart";
-import PageWrapper from "@/components/page-wrapper";
-import { MyCart } from "@/components/my-cart";
 import { ReactNode } from "react";
-import { AlertStock } from "@/components/alert-stock";
+import { BodyComp } from "@/components/body-comp";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -62,13 +60,7 @@ export default async function RootLayout({
           <Initializer initialData={data} />
           <SubscribeCart />
           <Navbar />
-          <div className="flex w-full min-h-screen justify-center overflow-x-hidden">
-            <PageWrapper>
-              {children}
-              <AlertStock />
-            </PageWrapper>
-            <MyCart />
-          </div>
+          <BodyComp children={children} />
         </StoreProvider>
       </body>
     </html>

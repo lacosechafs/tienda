@@ -1,3 +1,5 @@
+import { Dispatch, RefObject, SetStateAction } from "react";
+
 export interface Props {
     params: Promise<{ slug: string }>
 }
@@ -78,6 +80,37 @@ export interface InputPassType {
     currentPass: string | number;
     newPass: string | number;
     status: string;
+}
+
+export interface InputSearchType {
+    setFindProduct: Dispatch<SetStateAction<string>>;
+    setFocusItem: Dispatch<SetStateAction<boolean>>;
+    inputRef: RefObject<HTMLDivElement | null>;
+}
+
+export interface InputResultsType {
+    findProduct: string;
+    focusItem: boolean;
+    setFocusItem: Dispatch<SetStateAction<boolean>>;
+    inputRef: RefObject<HTMLDivElement | null>;
+}
+
+export interface ButtonSignType {
+    setShowMenu: Dispatch<SetStateAction<boolean>>;
+    signRef: RefObject<HTMLDivElement | null>;
+}
+
+export interface FormSignType extends ButtonSignType {
+    showMenu: boolean;
+}
+
+export interface CatType {
+    setShowCat: Dispatch<SetStateAction<boolean>>;
+    catRef: RefObject<HTMLDivElement | null>;
+}
+
+export interface CatListType extends CatType {
+    showCat: boolean;
 }
 
 export type ProductPayload = Omit<SliceType, 'quantity'>

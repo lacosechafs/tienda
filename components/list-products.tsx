@@ -10,7 +10,7 @@ export const ListProducts = ({ products, title }: { products: Array<dataProducts
     if (!visibleProducts.length) return
 
     return (
-        <div>
+        <div className="px-2">
             {title && (
                 <h1 className="text-2xl font-bold mb-4">{title}</h1>
             )}

@@ -1,15 +1,28 @@
 import { useAppSelector } from '@/hooks/useRedux'
 import { RootState } from '@/redux/makeStore'
-import { dataProducts } from '@/types/types'
-import React, { Dispatch, SetStateAction } from 'react'
+import { CatListType, dataProducts } from '@/types/types'
+import { useEffect, useRef } from 'react'
 import { TransitionLink } from './transition-link'
+import { clickOutside, removeCLickOut } from '@/helpers/click-outside'
 
-export const ListCategories = ({ showCat, setShowCat }: { showCat: boolean, setShowCat: Dispatch<SetStateAction<boolean>> }) => {
+export const ListCategories = ({ showCat, setShowCat, catRef }: CatListType) => {
 
     const data = useAppSelector((state: RootState) => state.data.products)
 
+    const catListRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+
+        const handleGlobalClick = (e: MouseEvent) => {
+            clickOutside(e, [catListRef, catRef], setShowCat)
+        }
+
+        return removeCLickOut(handleGlobalClick)
+
+    }, [catListRef, catRef])
+
     return (
-        <div className={`top-full left-0 right-0 absolute bg-(--backgroundlt) duration-500 overflow-hidden grid ${showCat ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
+        <div ref={catListRef} className={`bg-(--backgroundlt) duration-500 overflow-hidden grid ${showCat ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
             <div className='min-h-0'>
                 <div className="md:container-md mx-auto flex flex-row justify-center md:justify-start flex-wrap max-w-screen-lg pb-5">
                     {data.map(c => {

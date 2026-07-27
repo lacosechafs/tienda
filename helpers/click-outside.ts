@@ -1,8 +1,16 @@
 import { RefObject } from 'react'
 
-export const clickOutside = (e: MouseEvent, ref: RefObject<HTMLElement | null>, status: (value: boolean) => void) => {
-    if (ref.current && !ref.current.contains(e.target as Node)) {
-        status(false)
+export const clickOutside = (
+    e: MouseEvent,
+    refs: Array<RefObject<HTMLElement | null>>,
+    status: (value: boolean) => void
+) => {
+    const target = e.target as Node;
+
+    const isOutsideAll = refs.every(ref => ref.current && !ref.current.contains(target));
+
+    if (isOutsideAll) {
+        status(false);
     }
 }
 

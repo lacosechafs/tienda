@@ -21,7 +21,9 @@ export default async function Page({ params }: Props) {
   }
 
   return (
-    <ListProducts products={category.products} />
+    <div className="w-full mt-5 px-2">
+      <ListProducts products={category.products} />
+    </div>
   );
 }
 
