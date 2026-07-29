@@ -52,6 +52,15 @@ export interface ProductsState {
     stock: boolean;
 }
 
+export interface UserObjState {
+    address: Array<string>;
+    phone: number | null;
+    name: string;
+}
+
+export interface UserState {
+    data: UserObjState;
+}
 
 export interface CartType {
     products: Array<ArrayProduct>
@@ -84,33 +93,62 @@ export interface InputPassType {
 
 export interface InputSearchType {
     setFindProduct: Dispatch<SetStateAction<string>>;
-    setFocusItem: Dispatch<SetStateAction<boolean>>;
-    inputRef: RefObject<HTMLDivElement | null>;
+    setOpenOptions: Dispatch<SetStateAction<string | null>>;
 }
 
 export interface InputResultsType {
     findProduct: string;
-    focusItem: boolean;
-    setFocusItem: Dispatch<SetStateAction<boolean>>;
-    inputRef: RefObject<HTMLDivElement | null>;
+    openOptions: string | null;
+    setOpenOptions: Dispatch<SetStateAction<string | null>>;
 }
 
 export interface ButtonSignType {
-    setShowMenu: Dispatch<SetStateAction<boolean>>;
-    signRef: RefObject<HTMLDivElement | null>;
+    setOpenOptions: Dispatch<SetStateAction<string | null>>;
 }
 
-export interface FormSignType extends ButtonSignType {
-    showMenu: boolean;
+export interface FormSignType {
+    openOptions: string | null;
 }
 
 export interface CatType {
-    setShowCat: Dispatch<SetStateAction<boolean>>;
-    catRef: RefObject<HTMLDivElement | null>;
+    setOpenOptions: Dispatch<SetStateAction<string | null>>;
 }
 
 export interface CatListType extends CatType {
-    showCat: boolean;
+    openOptions: string | null;
+}
+
+export interface OrderType {
+    address: string;
+    phone: number | null;
+    products: Array<Record<string, Array<SliceType> | undefined>>;
+    total_pay: number;
+    uuid: string;
 }
 
 export type ProductPayload = Omit<SliceType, 'quantity'>
+
+export interface ValueOrderType {
+    data: string | null | number;
+    check: boolean
+}
+
+export interface EntriesOrderType {
+    address: ValueOrderType;
+    phone: ValueOrderType
+}
+
+export interface InputOrderType {
+    label: string;
+    name: keyof EntriesOrderType;
+    placeholder: string;
+    value: ValueOrderType;
+    setValue: Dispatch<SetStateAction<EntriesOrderType>>;
+    allAddress?: Array<string>;
+    textCheck?: string;
+}
+
+export interface UserPayload {
+    key: keyof UserState['data'];
+    value: any;
+}

@@ -5,7 +5,7 @@ import { useAppSelector } from "@/hooks/useRedux"
 import { toggleCart } from "@/redux/cartSlice"
 import { RootState } from "@/redux/makeStore"
 import { ShoppingCart } from "lucide-react"
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useState } from "react"
 import { useDispatch } from "react-redux"
 
 export const InfoCart = () => {
@@ -14,7 +14,6 @@ export const InfoCart = () => {
     const productsCart = useAppSelector((state: RootState) => state.cart.products)
     const products = useAppSelector((state: RootState) => state.data.products)
     const isCartOpen = useAppSelector((state: RootState) => state.cart.isOpen)
-    const cartRef = useRef<HTMLDivElement>(null)
 
     const productsInCart = FlatStock({ products })
 
@@ -28,7 +27,7 @@ export const InfoCart = () => {
     const showWarning = hasAllStock && firstClick && !isCartOpen
 
     return (
-        <div ref={cartRef} className="relative flex content-center justify-center m-2">
+        <div className="relative flex content-center justify-center m-2">
             <button onClick={() => { dispatch(toggleCart()); setFirstClick(false) }} className="cursor-pointer">
                 {productsCart && (
                     <div className={`absolute top-0 left-[calc(100%-10px)] w-5 h-5 rounded-full text-[length:14px] duration-500 ${showWarning ? "bg-yellow-700" : "bg-green-700"} ${productsCart.length === 0 ? "opacity-0" : "opacity-100"}`}>

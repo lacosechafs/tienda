@@ -1,19 +1,21 @@
 "use client"
 
-import { clickOutside, removeCLickOut } from "@/helpers/click-outside"
 import { createClient } from "@/lib/supabase/client"
 import { signUser } from "@/helpers/sign-user"
 import { setCartProducts } from "@/redux/cartSlice"
 import { useRouter } from "next/navigation"
-import { ChangeEvent, RefObject, SubmitEvent, useEffect, useRef, useState } from "react"
+import { ChangeEvent, SubmitEvent, useEffect, useRef, useState } from "react"
 import { useDispatch } from "react-redux"
 import { SignInWithPasswordCredentials } from "@supabase/supabase-js"
 import { InputUser } from "./input-user"
-import { SendData } from "@/helpers/send-data"
 import { InputPass } from "./input-pass"
 import { FormSignType } from "@/types/types"
+import { useGetSession } from "@/hooks/useGetSession"
+import { useAppSelector } from "@/hooks/useRedux"
+import { RootState } from "@/redux/makeStore"
+import { changeData, setApData } from "@/redux/userSlice"
 
-export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
+export const FormSign = ({ openOptions }: FormSignType) => {
 
     const router = useRouter()
     const dispatch = useDispatch()
@@ -24,9 +26,8 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
     const [chosenOption, setChosenOption] = useState<string>('')
     const [errorUser, setErrorUser] = useState<string | null>(null)
     const [errorAnimate, setErrorAnimate] = useState<boolean>(false)
-    const [changeAdress, setChangeAdress] = useState<Array<string>>([])
 
-    const [deletingAdress, setDeletingAdress] = useState<string | null>(null);
+    const [deletingAddress, setDeletingAddress] = useState<string | null>(null);
 
     const accountRef = useRef<HTMLDivElement>(null)
 
@@ -34,30 +35,22 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
         setDataAcc(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
+    const dataProf = useGetSession();
+
+    const apUser = useAppSelector((state: RootState) => state.user.data)
+
     const supabase = createClient()
     const [user, setUser] = useState<any>(null)
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const { data } = await supabase.auth.getUser()
 
-            if (data?.user) {
-                const uuid = data.user.id
-
-                const { data: dataProf, error: errorProf } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', uuid)
-
-                if (dataProf) {
-                    setUser(dataProf)
-                    dispatch(setCartProducts(dataProf[0].saved_cart))
-                    setChangeAdress([...dataProf[0].adress])
-                }
-            }
+        if (dataProf) {
+            setUser(dataProf)
+            dispatch(setCartProducts(dataProf[0].saved_cart))
+            dispatch(setApData(dataProf[0]))
         }
-        fetchUser()
-    }, [accessAccount])
+
+    }, [accessAccount, dataProf])
 
     const signOut = async () => {
         const { error } = await supabase.auth.signOut()
@@ -70,21 +63,10 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
         setUser(null)
         setDataAcc({ name: "", mail: "", password: "" })
         dispatch(setCartProducts([]))
-        setChangeAdress([])
         router.push('/')
         router.refresh()
 
     }
-
-    useEffect(() => {
-
-        const handleGlobalClick = (e: MouseEvent) => {
-            clickOutside(e, [accountRef, signRef], setShowMenu)
-        }
-
-        return removeCLickOut(handleGlobalClick)
-
-    }, [accountRef, signRef])
 
     useEffect(() => {
         if (!errorUser) {
@@ -109,7 +91,7 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
         <div ref={accountRef} className="relative content-center justify-items-center">
             <div
                 className={`grid bg-(--backgroundlt) transition-discrete duration-500  w-full container
-                            ${showMenu
+                            ${openOptions === 'sign'
                         ? "grid-rows-[1fr] opacity-100 duration-500 delay-50"
                         : "grid-rows-[0fr] opacity-0 pointer-events-none transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
                     }`}
@@ -124,8 +106,8 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
                         >
                             <div className="overflow-hidden">
                                 <div className="p-2 mb-2">
-                                    <p className="h-[34px] mb-2">
-                                        ¡Hola {user?.[0]?.name || "Usuario"}!
+                                    <p className="h-[34px] text-[24px] mb-4 md:justify-self-center">
+                                        ¡Hola {apUser?.name || "Usuario"}!
                                     </p>
                                     <div className="relative md:border-e md:w-1/2">
                                         <div className="text-end w-full pe-[10%] my-2 ">
@@ -152,24 +134,26 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
                                                 <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
 
                                                     <InputUser
-                                                        user={user?.[0]?.name}
+                                                        user={apUser?.name}
                                                         type="name"
                                                         placeholder="Nombre (Opcional)"
                                                         border="border-t md:border-y"
                                                         icon="save"
                                                         onSave={(newValue, setStatus) => {
-                                                            SendData("name", newValue, setStatus)
+                                                            dispatch(changeData({ key: 'name', value: newValue }))
+                                                            // SendData("name", newValue, setStatus)
                                                         }}
                                                     />
 
                                                     <InputUser
-                                                        user={user?.[0]?.phone}
+                                                        user={Number(apUser?.phone)}
                                                         type="phone"
                                                         placeholder="Teléfono"
                                                         border="border-y"
                                                         icon="save"
                                                         onSave={(newValue, setStatus) => {
-                                                            SendData("phone", newValue, setStatus)
+                                                            dispatch(changeData({ key: 'phone', value: newValue }))
+                                                            // SendData("phone", newValue, setStatus)
                                                         }}
                                                     />
                                                 </div>
@@ -179,14 +163,14 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
                                         <div className="text-end w-full pe-[10%] my-2 ">
                                             <button
                                                 className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
-                                                onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'adress' ? 'adress' : '')}
-                                                onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('adress')}
+                                                onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'address' ? 'address' : '')}
+                                                onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('address')}
                                             >
                                                 Mis direcciones
                                             </button>
                                         </div>
                                         <div className={`md:absolute left-[110%] md:top-0 md:h-full md:w-3/4 grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
-                                                        ${chosenOption === 'adress'
+                                                        ${chosenOption === 'address'
                                                 ? "grid-rows-[1fr] opacity-100 delay-100 z-10"
                                                 : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms] z-1"
                                             }`}
@@ -195,10 +179,10 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
                                                 <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
                                                     <div className="md:mb-2">
                                                         <p className="text-sm hidden md:block">Direcciones guardadas</p>
-                                                        {changeAdress.length > 0 ? (
-                                                            changeAdress.map((a: string, i: number) => {
-                                                                const isDeleting = deletingAdress === a;
-                                                                const isLast = changeAdress.length - 1 === i
+                                                        {apUser.address.length > 0 ? (
+                                                            apUser.address.map((a: string, i: number) => {
+                                                                const isDeleting = deletingAddress === a;
+                                                                const isLast = apUser.address.length - 1 === i
 
                                                                 return (
                                                                     <div
@@ -213,16 +197,18 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
                                                                             <div className="w-1/6 text-center content-center me-2">
                                                                                 <button
                                                                                     onClick={() => {
-                                                                                        setDeletingAdress(a);
+                                                                                        setDeletingAddress(a);
 
-                                                                                        const actualAdress = changeAdress.filter((f) => f !== a);
+                                                                                        const actualAddress = apUser.address.filter((f) => f !== a);
 
-                                                                                        SendData("adress", actualAdress);
+                                                                                        dispatch(changeData({ key: 'address', value: actualAddress }))
 
-                                                                                        setTimeout(() => {
-                                                                                            setChangeAdress(actualAdress);
-                                                                                            setDeletingAdress(null);
-                                                                                        }, 500);
+                                                                                        // SendData("address", actualAddress);
+
+                                                                                        // setTimeout(() => {
+                                                                                        //     setChangeAddress(actualAddress);
+                                                                                        //     setDeletingAddress(null);
+                                                                                        // }, 500);
                                                                                     }}
                                                                                     className="p-2"
                                                                                 >
@@ -242,25 +228,27 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
 
                                                     <InputUser
                                                         user={""}
-                                                        type="adress"
+                                                        type="address"
                                                         placeholder="Dirección"
                                                         border="border-t md:border-y"
                                                         icon="save"
-                                                        array={user?.[0]?.adress}
+                                                        array={apUser?.address}
                                                         onSave={async (newValue, setStatus) => {
                                                             if (!newValue) return;
 
-                                                            const updatedAddresses = [...changeAdress, String(newValue)];
+                                                            const updatedAddresses = [...apUser.address, String(newValue)]; +
 
-                                                            SendData("adress", updatedAddresses, (status) => {
-                                                                setStatus(status);
+                                                                dispatch(changeData({ key: 'address', value: updatedAddresses }))
 
-                                                                if (status === "ok") {
-                                                                    setTimeout(() => {
-                                                                        setChangeAdress(updatedAddresses);
-                                                                    }, 3000);
-                                                                }
-                                                            });
+                                                            // SendData("address", updatedAddresses, (status) => {
+                                                            //     setStatus(status);
+
+                                                            //     if (status === "ok") {
+                                                            //         setTimeout(() => {
+                                                            //             setChangeAddress(updatedAddresses);
+                                                            //         }, 3000);
+                                                            //     }
+                                                            // });
                                                         }}
                                                     />
                                                 </div>
@@ -314,7 +302,6 @@ export const FormSign = ({ showMenu, setShowMenu, signRef }: FormSignType) => {
                                         </div>
                                         <div className="mt-2 md:text-end md:pe-[10%]">
                                             <button className="w-fit py-1 cursor-pointer outline-none" onClick={signOut}>
-                                                {/* <button className="w-fit h-[38px] text-end px-2 py-1 border rounded mt-2 cursor-pointer outline-none" onClick={signOut}> */}
                                                 Cerrar sesión
                                             </button>
                                         </div>

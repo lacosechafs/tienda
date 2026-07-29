@@ -20,7 +20,7 @@ export const InputUser = ({
 
     const [iconShow, setIconShow] = useState<string>(icon)
     const [iconAnimate, setIconAnimate] = useState<boolean>(false)
-
+ 
     useEffect(() => {
         setData(user)
         setLastData(user)
@@ -77,7 +77,7 @@ export const InputUser = ({
                         onClick={async () => {
                             if (onSave) {
                                 onSave(data, setChangeConf)
-                                if (type === "adress") {
+                                if (type === "address") {
                                     setTimeout(() => {
                                         setData("")
                                         setLastData("")

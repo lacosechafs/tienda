@@ -56,13 +56,21 @@ export const SubscribeCart = () => {
         const unsubscribe = store.subscribe(async () => {
             const state = (store.getState() as unknown) as RootState
             const dataToSync = state.cart.products
+            const userToSync = state.user.data
+            const allInfo = { saved_cart: dataToSync, ...userToSync }
 
-            if (JSON.stringify(lastSavedStateRef.current) === JSON.stringify(dataToSync)) {
+            const cartChanged = JSON.stringify(lastSavedStateRef.current.cart) !== JSON.stringify(dataToSync)
+            const userChanged = JSON.stringify(lastSavedStateRef.current.user) !== JSON.stringify(userToSync)
+
+            if (!cartChanged && !userChanged) {
                 return
             }
 
-            lastSavedStateRef.current = dataToSync
-
+            lastSavedStateRef.current = {
+                cart: dataToSync,
+                user: userToSync
+            }
+            
             try {
                 if (!userLogged) {
                     if (dataToSync) {
@@ -73,12 +81,14 @@ export const SubscribeCart = () => {
 
                 await supabase
                     .from('profiles')
-                    .update({ saved_cart: dataToSync })
+                    .update(allInfo)
                     .eq('id', userLogged)
 
             } catch (error) {
                 console.error('Error al guardar productos:', error)
             }
+            console.log('guardado')
+
         })
 
         return () => {

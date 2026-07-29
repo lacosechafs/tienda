@@ -1,16 +1,16 @@
 import { CatType } from '@/types/types'
 
-export const Categories = ({ setShowCat, catRef }: CatType) => {
+export const Categories = ({ setOpenOptions }: CatType) => {
 
     return (
         <div
             className='flex'
-            ref={catRef}
         >
             <a
                 className='content-center y-2 cursor-pointer'
-
-                onClick={() => setShowCat(prev => !prev)}
+                onClick={() => {
+                    setOpenOptions(prev => prev === 'cat' ? '' : 'cat')
+                }}
             >
                 Categorias
             </a>

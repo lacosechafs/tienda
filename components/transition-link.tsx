@@ -7,10 +7,10 @@ interface TransitionLinkProps {
     href: string
     children: ReactNode
     className?: string
-    setShowCat?: Dispatch<SetStateAction<boolean>>
+    setOpenOptions?: Dispatch<SetStateAction<string | null>>
 }
 
-export const TransitionLink = ({ href, children, setShowCat, className }: TransitionLinkProps) => {
+export const TransitionLink = ({ href, children, className, setOpenOptions }: TransitionLinkProps) => {
     const router = useRouter()
     const pathname = usePathname()
 
@@ -29,7 +29,7 @@ export const TransitionLink = ({ href, children, setShowCat, className }: Transi
     }
 
     return (
-        <a href={href} onClick={(e) => { handleNavigation(e); setShowCat && setShowCat(prev => !prev) }} className={className}>
+        <a href={href} onClick={(e) => { handleNavigation(e); setOpenOptions && setOpenOptions(null) }} className={className}>
             {children}
         </a>
     )

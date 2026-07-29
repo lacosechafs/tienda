@@ -7,13 +7,13 @@ export const InputBycat = ({
     slug,
     currentProducts,
     findCat,
-    setFocusItem
+    setOpenOptions
 }: {
     categoryName: string,
     currentProducts: Array<dataProducts>,
     slug: string,
     findCat: boolean
-    setFocusItem: Dispatch<SetStateAction<boolean>>
+    setOpenOptions: Dispatch<SetStateAction<string | null>>
 }) => {
 
     const [displayedProducts, setDisplayedProducts] = useState(currentProducts)
@@ -51,7 +51,7 @@ export const InputBycat = ({
                 : "delay-50 grid-rows-[0fr]"}
                 `}>
             <div className='min-h-0'>
-                <a href={slug} onClick={() => setFocusItem(prev => !prev)}>
+                <a href={slug} onClick={() => setOpenOptions(null)}>
                     <p className='font-bold text-[18px] border-b my-2'>
                         {categoryName}
                     </p>

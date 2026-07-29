@@ -1,15 +1,15 @@
 import { ButtonSignType } from "@/types/types"
 import { useRef } from "react"
 
-export const ButtonSign = ({ signRef, setShowMenu }: ButtonSignType) => {
+export const ButtonSign = ({ setOpenOptions }: ButtonSignType) => {
 
     const accountRef = useRef<HTMLDivElement>(null)
 
     return (
-        <div ref={signRef} className="relative content-center justify-items-center m-2">
+        <div className="relative content-center justify-items-center m-2">
             <svg
                 className="cursor-pointer"
-                onClick={() => setShowMenu(prev => !prev)}
+                onClick={() => setOpenOptions(prev => prev === 'sign' ? '' : 'sign')}
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
                 height="32"
