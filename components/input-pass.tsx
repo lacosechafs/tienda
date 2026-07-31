@@ -25,7 +25,7 @@ const AnimatedErrorMessage = ({ message }: { message: string }) => {
     return (
         <div className="h-6 overflow-hidden">
             <span
-                className={`block text-red-400 text-xs mt-1 px-2 transition-all duration-500 transform ${isVisible && message
+                className={`block text-red-400 text-xs mt-1 px-2 transition-all duration-500 ease-in-out transform ${isVisible && message
                     ? "opacity-100"
                     : "opacity-0 pointer-events-none"
                     }`}
@@ -143,7 +143,7 @@ export const InputPass = ({ email }: { email: string }) => {
                     className="w-5/6 px-2 py-[6px] rounded outline-none bg-transparent"
                 />
                 <div
-                    className={`w-1/6 justify-items-center content-center me-2 text-red-400 transition-opacity duration-500 ${status.includes("actual")
+                    className={`w-1/6 justify-items-center content-center me-2 text-red-400 transition-opacity duration-500 ease-in-out ${status.includes("actual")
                         ? "opacity-100"
                         : "opacity-0 pointer-events-none"
                         }`}
@@ -191,7 +191,7 @@ export const InputPass = ({ email }: { email: string }) => {
                         width="20"
                         height="20"
                         viewBox="0 0 24 24"
-                        className={`text-red-400 transition-opacity duration-500 ${equalPass === false && status !== "Cambio realizado con éxito"
+                        className={`text-red-400 transition-opacity duration-500 ease-in-out ${equalPass === false && status !== "Cambio realizado con éxito"
                             ? "opacity-100 animate-pulse"
                             : "opacity-0 pointer-events-none"
                             }`}
@@ -203,7 +203,7 @@ export const InputPass = ({ email }: { email: string }) => {
                         <button
                             type="submit"
                             disabled={isLoading || equalPass !== true}
-                            className={`p-2 transition-all duration-500 ${status === "Cambio realizado con éxito"
+                            className={`p-2 transition-all duration-500 ease-in-out ${status === "Cambio realizado con éxito"
                                 ? "text-green-400 opacity-100"
                                 : equalPass === true
                                     ? "text-white opacity-100"

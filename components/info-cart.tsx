@@ -30,11 +30,11 @@ export const InfoCart = () => {
         <div className="relative flex content-center justify-center m-2">
             <button onClick={() => { dispatch(toggleCart()); setFirstClick(false) }} className="cursor-pointer">
                 {productsCart && (
-                    <div className={`absolute top-0 left-[calc(100%-10px)] w-5 h-5 rounded-full text-[length:14px] duration-500 ${showWarning ? "bg-yellow-700" : "bg-green-700"} ${productsCart.length === 0 ? "opacity-0" : "opacity-100"}`}>
-                        <span className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${showWarning ? "scale-100 opacity-100" : "scale-0 opacity-0"}`}>
+                    <div className={`absolute top-0 left-[calc(100%-10px)] w-5 h-5 rounded-full text-[length:14px] duration-500 ease-in-out ${showWarning ? "bg-yellow-700" : "bg-green-700"} ${productsCart.length === 0 ? "opacity-0" : "opacity-100"}`}>
+                        <span className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ease-in-out ${showWarning ? "scale-100 opacity-100" : "scale-0 opacity-0"}`}>
                             !
                         </span>
-                        <span className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${showWarning ? "scale-0 opacity-0" : "scale-100 opacity-100"}`}>
+                        <span className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ease-in-out ${showWarning ? "scale-0 opacity-0" : "scale-100 opacity-100"}`}>
                             {productsCart.length}
                         </span>
                     </div>

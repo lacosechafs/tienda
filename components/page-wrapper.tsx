@@ -20,7 +20,7 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
     return (
         <div
             id="page-wrapper"
-            className={`transition-opacity duration-500 w-full md:max-w-[calc(100%-350px)] md:w-auto ${opacityClass} h-full min-h-[calc(100dvh-60px)]`}
+            className={`transition-opacity flex-1 duration-500 ease-in-out w-full md:max-w-[calc(100%-350px)] md:w-auto ${opacityClass} h-full min-h-[calc(100dvh-60px)]`}
         >
             {children}
         </div>

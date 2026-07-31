@@ -22,7 +22,7 @@ export default async function Page({ params }: Props) {
 
   return (
     <div className="w-full mt-5 px-2">
-      <ListProducts products={category.products} />
+      <ListProducts products={category.products} title={category.name} />
     </div>
   );
 }

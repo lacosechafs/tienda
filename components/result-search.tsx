@@ -3,6 +3,7 @@ import { RootState } from '@/redux/makeStore'
 import { dataProducts, InputResultsType } from '@/types/types'
 import { useRef } from 'react'
 import { InputBycat } from './navbar/input-bycat'
+import { GridComp } from './grid-comp'
 
 export const ResultSearch = ({ findProduct, setOpenOptions, openOptions }: InputResultsType) => {
 
@@ -32,35 +33,41 @@ export const ResultSearch = ({ findProduct, setOpenOptions, openOptions }: Input
         )
     })
 
-    const resultRef = useRef<HTMLDivElement>(null)
-
     const hasCatMatch = search.length >= 3 && products.some(c => normalizeText(c.name).includes(search))
     const anyResult = flatProducts.length > 0 || hasCatMatch
 
     return (
-        <div ref={resultRef} className={`grid px-3 bg-(--backgroundlt) md:grid-flow-row-dense md:[grid-template-columns:repeat(auto-fill,minmax(270px,1fr))] transition-discrete duration-500 ${openOptions === 'search' && anyResult ? "opacity-100 block starting:opacity-0 grid-rows-[1fr]" : "opacity-0 hidden grid-rows-[0fr]"}`}>
-            {products.map(f => {
-                const productsByCategory = flatProducts.filter(m =>
-                    m.category === f.name
-                );
+        <GridComp
+            condition={openOptions === 'search' && anyResult}
+            extraClass="px-3 bg-(--backgroundlt)"
+            class1fr="my-1"
+            class0fr="my-0"
+        >
+            <div className='grid md:grid-flow-row-dense md:[grid-template-columns:repeat(auto-fill,minmax(270px,1fr))]'>
+                {products.map(f => {
+                    const productsByCategory = flatProducts.filter(m =>
+                        m.category === f.name
+                    );
 
-                const findCat = (search.length >= 3 && normalizeText(f.name).includes(search) || search === "")
+                    const findCat = (search.length >= 3 && normalizeText(f.name).includes(search) || search === "")
 
-                if (!productsByCategory.length) return
+                    if (!productsByCategory.length) return
 
 
-                return (
-                    <InputBycat
-                        key={f.name}
-                        categoryName={f.name}
-                        slug={f.slug}
-                        currentProducts={productsByCategory}
-                        findCat={findCat}
-                        setOpenOptions={setOpenOptions}
-                    />
-                )
-            })
-            }
-        </div>
+                    return (
+                        <InputBycat
+                            key={f.name}
+                            categoryName={f.name}
+                            slug={f.slug}
+                            currentProducts={productsByCategory}
+                            findCat={findCat}
+                            setOpenOptions={setOpenOptions}
+                        />
+                    )
+                })
+                }
+            </div>
+        </GridComp>
     )
 }
+

@@ -21,8 +21,8 @@ export const Navbar = () => {
   const [openOptions, setOpenOptions] = useState<string | null>(null)
 
   return (
-    <div className="sticky top-0 left-0 md:w-full bg-(--backgroundlt) text-(--foreground) z-9 relative">
-      <div className="mx-auto flex flex-wrap md:flex-nowrap justify-between max-w-screen-lg min-h-15">
+    <div className="sticky top-0 left-0 md:w-full bg-(--backgroundlt) text-(--foreground) z-9 relative self-center">
+      <div className="mx-auto flex flex-wrap md:flex-nowrap justify-between w-full max-w-screen-xl md:px-4 min-h-15">
 
         <TransitionLink href="/">
           <Image
@@ -56,7 +56,7 @@ export const Navbar = () => {
         </div>
       </div>
 
-      <div className={`max-w-screen-lg md:w-[calc(100%-350px)] px-3 justify-self-center duration-1000 ease-in-out ${isCartOpen ? "-translate-x-[175px]" : "translate-none"}`}>
+      <div className={`max-w-screen-lg md:w-[calc(100%-350px)] px-3 justify-self-center duration-1000 ease-in-out ${isCartOpen ? "-translate-x-[175px] min-[2000px]:translate-none" : "translate-none"}`}>
 
         <ListCategories setOpenOptions={setOpenOptions} openOptions={openOptions} />
 

@@ -6,49 +6,64 @@ import { setCartProducts } from '@/redux/cartSlice'
 import { RootState } from '@/redux/makeStore'
 import { useEffect, useRef, useState } from 'react'
 
+const supabase = createClient()
+
 export const SubscribeCart = () => {
     const store = useAppStore()
-    const supabase = createClient()
     const dispatch = useAppDispatch()
 
     const [isFullyLoaded, setIsFullyLoaded] = useState(false)
     const [userLogged, setUserLogged] = useState("")
-    const lastSavedStateRef = useRef<any>(null)
+
+    const lastSavedStateRef = useRef<{ cart: any; user: any }>({
+        cart: null,
+        user: null,
+    })
 
     useEffect(() => {
+        let isMounted = true
+
         async function fetchInitialCart() {
             try {
                 const { data: { user } } = await supabase.auth.getUser()
 
                 if (user) {
+                    if (!isMounted) return
                     setUserLogged(user.id)
+
                     const { data } = await supabase
                         .from('profiles')
                         .select('saved_cart')
                         .eq('id', user.id)
                         .single()
 
-                    if (data?.saved_cart) {
-                        lastSavedStateRef.current = data.saved_cart
+                    if (data?.saved_cart && isMounted) {
                         dispatch(setCartProducts(data.saved_cart))
+                        lastSavedStateRef.current.cart = data.saved_cart
                     }
                 } else {
                     const localCart = window.localStorage.getItem('cart')
-                    if (localCart) {
+                    if (localCart && isMounted) {
                         const parsedCart = JSON.parse(localCart)
-                        lastSavedStateRef.current = parsedCart
                         dispatch(setCartProducts(parsedCart))
+                        lastSavedStateRef.current.cart = parsedCart
                     }
                 }
             } catch (error) {
                 console.error('Error al traer el carrito inicial:', error)
             } finally {
-                setIsFullyLoaded(true)
+                if (isMounted) {
+                    setIsFullyLoaded(true)
+                }
             }
         }
 
         fetchInitialCart()
-    }, [supabase, dispatch])
+
+        return () => {
+            isMounted = false
+        }
+    }, [dispatch])
 
     useEffect(() => {
         if (!isFullyLoaded) return
@@ -57,7 +72,6 @@ export const SubscribeCart = () => {
             const state = (store.getState() as unknown) as RootState
             const dataToSync = state.cart.products
             const userToSync = state.user.data
-            const allInfo = { saved_cart: dataToSync, ...userToSync }
 
             const cartChanged = JSON.stringify(lastSavedStateRef.current.cart) !== JSON.stringify(dataToSync)
             const userChanged = JSON.stringify(lastSavedStateRef.current.user) !== JSON.stringify(userToSync)
@@ -70,7 +84,7 @@ export const SubscribeCart = () => {
                 cart: dataToSync,
                 user: userToSync
             }
-            
+
             try {
                 if (!userLogged) {
                     if (dataToSync) {
@@ -78,6 +92,8 @@ export const SubscribeCart = () => {
                     }
                     return
                 }
+
+                const allInfo = { saved_cart: dataToSync, ...userToSync }
 
                 await supabase
                     .from('profiles')
@@ -87,14 +103,12 @@ export const SubscribeCart = () => {
             } catch (error) {
                 console.error('Error al guardar productos:', error)
             }
-            console.log('guardado')
-
         })
 
         return () => {
             unsubscribe()
         }
-    }, [store, supabase, isFullyLoaded, userLogged])
+    }, [store, isFullyLoaded, userLogged])
 
     return null
 }

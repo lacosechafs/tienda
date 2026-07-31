@@ -56,6 +56,7 @@ export interface UserObjState {
     address: Array<string>;
     phone: number | null;
     name: string;
+    favs: Array<number>;
 }
 
 export interface UserState {
@@ -66,17 +67,10 @@ export interface CartType {
     products: Array<ArrayProduct>
 }
 
-export interface SliceType {
-    name: string;
-    id: number;
-    size: number;
-    unit?: string;
-    quantity?: number;
-    public_price?: number;
-}
+export type SliceType = Partial<ArrayProduct> & Pick<ArrayProduct, 'name' | 'id' | 'size'>;
 
 export interface InputUserType {
-    user: string | number;
+    user: string | number | null;
     type: string;
     placeholder: string;
     border: string;
@@ -144,11 +138,40 @@ export interface InputOrderType {
     placeholder: string;
     value: ValueOrderType;
     setValue: Dispatch<SetStateAction<EntriesOrderType>>;
-    allAddress?: Array<string>;
-    textCheck?: string;
 }
 
 export interface UserPayload {
     key: keyof UserState['data'];
     value: any;
 }
+
+export interface GridCompType {
+    children: React.ReactNode;
+    condition: boolean | undefined | string;
+    extraClass?: string;
+    class1fr?: string;
+    class0fr?: string;
+
+}
+
+export interface BasePropsProduct {
+    name: string;
+    title: string;
+    id: number;
+}
+
+export interface PropsBoxProduct extends BasePropsProduct {
+    catalog: Array<dataCatalog>;
+}
+
+export interface PropsDataProduct extends BasePropsProduct {
+    orderCatalog: Array<OrderItemCatalog>;
+}
+
+export interface PropsFavProduct {
+    name: string;
+}
+
+export type OrderItemCatalog = dataCatalog & {
+    finalPrice: number;
+};

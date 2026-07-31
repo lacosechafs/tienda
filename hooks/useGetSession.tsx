@@ -1,32 +1,44 @@
 "use client"
+
 import { createClient } from '@/lib/supabase/client'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-export const useGetSession = () => {
+const supabase = createClient()
 
-    const supabase = createClient()
-    const [userData, setUser] = useState<any>(null)
+export const useGetSession = (triggerReload?: any) => {
+    const [userData, setUserData] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        let isMounted = true
 
         const fetchUser = async () => {
-            const { data } = await supabase.auth.getUser()
+            try {
+                const { data: { user } } = await supabase.auth.getUser()
 
-            if (data?.user) {
-                const uuid = data.user.id
+                if (user && isMounted) {
+                    const { data: dataProf } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', user.id)
 
-                const { data: dataProf, error: errorProf } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', uuid)
-
-                if (dataProf) {
-                    setUser(dataProf)
+                    if (dataProf && isMounted) {
+                        setUserData(dataProf)
+                    }
                 }
+            } catch (error) {
+                console.error("Error al obtener sesión:", error)
+            } finally {
+                if (isMounted) setLoading(false)
             }
         }
-        fetchUser()
-    }, [])
 
-    return userData
+        fetchUser()
+
+        return () => {
+            isMounted = false
+        }
+    }, [triggerReload])
+
+    return { userData, loading }
 }

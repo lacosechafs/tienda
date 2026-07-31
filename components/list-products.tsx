@@ -2,6 +2,7 @@
 
 import { dataProductsPartial } from "@/types/types"
 import { BoxProduct } from "./productCard/box-product"
+import { useState } from "react";
 
 export const ListProducts = ({ products, title }: { products: Array<dataProductsPartial>, title?: string }) => {
 
@@ -18,6 +19,7 @@ export const ListProducts = ({ products, title }: { products: Array<dataProducts
                 {visibleProducts.map(m => (
                     <BoxProduct
                         key={m.id}
+                        id={m.id}
                         catalog={m.catalog}
                         name={m.name}
                         title={title || ""}

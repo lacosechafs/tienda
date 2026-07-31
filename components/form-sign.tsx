@@ -14,6 +14,8 @@ import { useGetSession } from "@/hooks/useGetSession"
 import { useAppSelector } from "@/hooks/useRedux"
 import { RootState } from "@/redux/makeStore"
 import { changeData, setApData } from "@/redux/userSlice"
+import { GridComp } from "./grid-comp"
+import { FavsProducts } from "./favs-products"
 
 export const FormSign = ({ openOptions }: FormSignType) => {
 
@@ -35,7 +37,7 @@ export const FormSign = ({ openOptions }: FormSignType) => {
         setDataAcc(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
-    const dataProf = useGetSession();
+    const { userData } = useGetSession(accessAccount);
 
     const apUser = useAppSelector((state: RootState) => state.user.data)
 
@@ -44,13 +46,13 @@ export const FormSign = ({ openOptions }: FormSignType) => {
 
     useEffect(() => {
 
-        if (dataProf) {
-            setUser(dataProf)
-            dispatch(setCartProducts(dataProf[0].saved_cart))
-            dispatch(setApData(dataProf[0]))
+        if (userData) {
+            setUser(userData)
+            dispatch(setCartProducts(userData[0].saved_cart))
+            dispatch(setApData(userData[0]))
         }
 
-    }, [accessAccount, dataProf])
+    }, [userData])
 
     const signOut = async () => {
         const { error } = await supabase.auth.signOut()
@@ -89,295 +91,242 @@ export const FormSign = ({ openOptions }: FormSignType) => {
 
     return (
         <div ref={accountRef} className="relative content-center justify-items-center">
-            <div
-                className={`grid bg-(--backgroundlt) transition-discrete duration-500  w-full container
-                            ${openOptions === 'sign'
-                        ? "grid-rows-[1fr] opacity-100 duration-500 delay-50"
-                        : "grid-rows-[0fr] opacity-0 pointer-events-none transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
-                    }`}
+            <GridComp
+                condition={openOptions === 'sign'}
+                extraClass="bg-(--backgroundlt) w-full"
+                class0fr="pointer-events-none"
             >
-                <div className="overflow-hidden">
-                    <div>
-                        <div className={`grid ease-in-out
-                            ${user
-                                ? "grid-rows-[1fr] opacity-100 duration-500 delay-50"
-                                : "grid-rows-[0fr] opacity-0 pointer-events-none transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
-                            }`}
-                        >
-                            <div className="overflow-hidden">
-                                <div className="p-2 mb-2">
-                                    <p className="h-[34px] text-[24px] mb-4 md:justify-self-center">
-                                        ¡Hola {apUser?.name || "Usuario"}!
-                                    </p>
-                                    <div className="relative md:border-e md:w-1/2">
-                                        <div className="text-end w-full pe-[10%] my-2 ">
-                                            <button
-                                                className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
-                                                onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'data' ? 'data' : '')}
-                                                onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('data')}
-                                            >
-                                                Mis datos
-                                            </button>
-                                        </div>
-                                        <div className={`md:absolute left-[110%] md:top-0 md:h-full md:w-3/4 grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
-                                                ${chosenOption === 'data'
-                                                ? "grid-rows-[1fr] opacity-100 delay-100 z-10"
-                                                : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms] z-1"
-                                            }
-                                            ${chosenOption === ''
-                                                ? "md:grid-rows-[1fr] md:opacity-100 md:delay-100 md:z-10"
-                                                : ""
-                                            }
-                                            `}
-                                        >
-                                            <div className="min-h-0">
-                                                <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
-
-                                                    <InputUser
-                                                        user={apUser?.name}
-                                                        type="name"
-                                                        placeholder="Nombre (Opcional)"
-                                                        border="border-t md:border-y"
-                                                        icon="save"
-                                                        onSave={(newValue, setStatus) => {
-                                                            dispatch(changeData({ key: 'name', value: newValue }))
-                                                            // SendData("name", newValue, setStatus)
-                                                        }}
-                                                    />
-
-                                                    <InputUser
-                                                        user={Number(apUser?.phone)}
-                                                        type="phone"
-                                                        placeholder="Teléfono"
-                                                        border="border-y"
-                                                        icon="save"
-                                                        onSave={(newValue, setStatus) => {
-                                                            dispatch(changeData({ key: 'phone', value: newValue }))
-                                                            // SendData("phone", newValue, setStatus)
-                                                        }}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="text-end w-full pe-[10%] my-2 ">
-                                            <button
-                                                className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
-                                                onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'address' ? 'address' : '')}
-                                                onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('address')}
-                                            >
-                                                Mis direcciones
-                                            </button>
-                                        </div>
-                                        <div className={`md:absolute left-[110%] md:top-0 md:h-full md:w-3/4 grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
-                                                        ${chosenOption === 'address'
-                                                ? "grid-rows-[1fr] opacity-100 delay-100 z-10"
-                                                : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms] z-1"
-                                            }`}
-                                        >
-                                            <div className="min-h-0">
-                                                <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
-                                                    <div className="md:mb-2">
-                                                        <p className="text-sm hidden md:block">Direcciones guardadas</p>
-                                                        {apUser.address.length > 0 ? (
-                                                            apUser.address.map((a: string, i: number) => {
-                                                                const isDeleting = deletingAddress === a;
-                                                                const isLast = apUser.address.length - 1 === i
-
-                                                                return (
-                                                                    <div
-                                                                        key={a || i}
-                                                                        className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden ${isDeleting
-                                                                            ? "grid-rows-[0fr] opacity-0"
-                                                                            : "grid-rows-[1fr] opacity-100 starting:grid-rows-[0fr] starting:opacity-0"
-                                                                            }`}
-                                                                    >
-                                                                        <div className={`min-h-0 flex justify-between border-[#ffffff50] ${isLast ? "border-t md:border-y" : "border-t"}`}>
-                                                                            <p className="w-5/6 content-center ms-2">{a}</p>
-                                                                            <div className="w-1/6 text-center content-center me-2">
-                                                                                <button
-                                                                                    onClick={() => {
-                                                                                        setDeletingAddress(a);
-
-                                                                                        const actualAddress = apUser.address.filter((f) => f !== a);
-
-                                                                                        dispatch(changeData({ key: 'address', value: actualAddress }))
-
-                                                                                        // SendData("address", actualAddress);
-
-                                                                                        // setTimeout(() => {
-                                                                                        //     setChangeAddress(actualAddress);
-                                                                                        //     setDeletingAddress(null);
-                                                                                        // }, 500);
-                                                                                    }}
-                                                                                    className="p-2"
-                                                                                >
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                                                        <path fill="currentColor" d="M18.36 19.78L12 13.41l-6.36 6.37l-1.42-1.42L10.59 12L4.22 5.64l1.42-1.42L12 10.59l6.36-6.36l1.41 1.41L13.41 12l6.36 6.36z" />
-                                                                                    </svg>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                );
-                                                            })
-                                                        ) : (
-                                                            <p className="p-2 text-sm opacity-70">No hay direcciones guardadas</p>
-                                                        )}
-                                                    </div>
-
-                                                    <InputUser
-                                                        user={""}
-                                                        type="address"
-                                                        placeholder="Dirección"
-                                                        border="border-t md:border-y"
-                                                        icon="save"
-                                                        array={apUser?.address}
-                                                        onSave={async (newValue, setStatus) => {
-                                                            if (!newValue) return;
-
-                                                            const updatedAddresses = [...apUser.address, String(newValue)]; +
-
-                                                                dispatch(changeData({ key: 'address', value: updatedAddresses }))
-
-                                                            // SendData("address", updatedAddresses, (status) => {
-                                                            //     setStatus(status);
-
-                                                            //     if (status === "ok") {
-                                                            //         setTimeout(() => {
-                                                            //             setChangeAddress(updatedAddresses);
-                                                            //         }, 3000);
-                                                            //     }
-                                                            // });
-                                                        }}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="text-end w-full md:pe-[10%] my-2 ">
-                                            <button
-                                                className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
-                                                onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'pass' ? 'pass' : '')}
-                                                onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('pass')}
-                                            >
-                                                Cambiar contraseña
-                                            </button>
-                                        </div>
-
-                                        <div className={`md:absolute left-[110%] md:top-0 md:h-full md:w-3/4 grid transition-[grid-template-rows,opacity] duration-500 ease-in-out overflow-hidden
-                                                         ${chosenOption === 'pass'
-                                                ? "grid-rows-[1fr] opacity-100 delay-100 z-10"
-                                                : "grid-rows-[0fr] opacity-0 transition-[opacity,grid-template-rows] duration-[250ms,500ms] z-1"
-                                            }`}
-                                        >
-                                            <div className="min-h-0">
-                                                <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
-
-                                                    <InputPass email={user?.[0].mail} />
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <button
-                                            className="md:pe-[10%] my-2 cursor-pointer text-start md:text-end w-full py-1 font-semibold hover:underline my-1 outline-none"
-                                            onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'fav' ? 'fav' : '')}
-                                            onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('fav')}
-                                        >
-                                            Modificar mis favoritos
-                                        </button>
-                                        <button
-                                            className="md:pe-[10%] my-2 cursor-pointer text-start md:text-end w-full py-1 font-semibold hover:underline my-1 outline-none"
-                                            onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'hist' ? 'hist' : '')}
-                                            onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('hist')}
-                                        >
-                                            Historial de pedidos
-                                        </button>
-                                        <div className={`grid transition-[grid-template-rows] duration-500 ease-in-out ${chosenOption === 'hist' ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
-                                            <div className="overflow-hidden">
-                                                <div className="py-2">
-                                                    <button className="cursor-pointer text-neutral-600 outline-none">Ver pedidos anteriores</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="mt-2 md:text-end md:pe-[10%]">
-                                            <button className="w-fit py-1 cursor-pointer outline-none" onClick={signOut}>
-                                                Cerrar sesión
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className={`grid ease-in-out
-                            ${!user
-                                ? "grid-rows-[1fr] opacity-100 duration-500 delay-50"
-                                : "grid-rows-[0fr] opacity-0 pointer-events-none transition-[opacity,grid-template-rows] duration-[250ms,500ms]"
-                            }`}
-                        >
-                            <div className="overflow-hidden">
-                                <form
-                                    className="flex flex-col md:flex-row gap-4 mb-2"
-                                    onSubmit={(e: SubmitEvent<HTMLFormElement>) => {
-                                        createAccount
-                                            ? signUser(e, dataAcc, (data: SignInWithPasswordCredentials) => supabase.auth.signInWithPassword(data), setAccessAccount, false, setErrorUser)
-                                            : signUser(e, dataAcc, (data: SignInWithPasswordCredentials) => supabase.auth.signUp(data), setAccessAccount, true, setErrorUser)
-                                    }}
-                                >
-                                    <div className="flex flex-col w-full gap-2">
-                                        <input
-                                            id="name-input"
-                                            name="name"
-                                            type="text"
-                                            placeholder="Nombre (opcional)"
-                                            value={dataAcc.name || ""}
-                                            onChange={handleChange}
-                                            className={`px-2 rounded border overflow-hidden duration-500 transition-all text-sm
-                                                ${!createAccount
-                                                    ? "h-[34px] py-1 opacity-100 block"
-                                                    : "h-0 border-y-0 py-0 opacity-0 pointer-events-none"
-                                                }`}
-                                        />
-                                        <input id="mail" name="mail" type="email" className="border px-2 py-1 rounded text-sm" placeholder="Email" value={dataAcc.mail || ""} onChange={handleChange} />
-                                        <input id="password" name="password" type="password" className="border px-2 py-1 rounded text-sm" placeholder="Contraseña" value={dataAcc.password || ""} onChange={handleChange} />
-                                    </div>
-
-                                    <div className="self-center text-center w-full md:w-28 [perspective:1000px]">
-                                        <button
-                                            className={`relative w-full md:w-28 h-10 border rounded cursor-pointer duration-500 [transform-style:preserve-3d] transition-transform outline-none ${createAccount ? "[transform:rotateX(180deg)]" : "[transform:rotateX(0deg)]"}`}
-                                            type="submit"
-                                        >
-                                            <span className="absolute inset-0 flex items-center justify-center backface-hidden bg-(--background) rounded font-medium">
-                                                Crear cuenta
-                                            </span>
-                                            <span className="absolute inset-0 flex items-center justify-center backface-hidden bg-(--background) rounded font-medium [transform:rotateX(180deg)]">
-                                                Acceder
-                                            </span>
-                                        </button>
-                                    </div>
-                                </form>
-
-                                <div className="flex mt-2">
-                                    <p>{createAccount ? "No" : "Ya"} tienes cuenta?&nbsp;</p>
+                <div>
+                    <GridComp condition={user}>
+                        <div className="p-2 mb-2">
+                            <p className="h-[34px] text-[24px] mb-4 md:justify-self-center">
+                                ¡Hola {apUser?.name || "Usuario"}!
+                            </p>
+                            <div className="relative md:border-e md:w-1/2">
+                                <div className="text-end w-full md:pe-[10%] my-2">
                                     <button
-                                        className="cursor-pointer font-bold hover:underline bg-transparent border-0 p-0 outline-none"
-                                        onClick={() => setCreateAccount(prev => !prev)}
+                                        className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
+                                        onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'data' ? 'data' : '')}
+                                        onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('data')}
                                     >
-                                        {createAccount ? "Créala" : "Ingresa"}
+                                        Mis datos
+                                    </button>
+                                </div>
+                                <GridComp
+                                    condition={chosenOption === 'data'}
+                                    extraClass={`md:absolute left-[110%] md:top-0 md:h-full md:w-3/4 `}
+                                    class0fr={`${chosenOption === '' ? "md:grid-rows-[1fr] md:opacity-100 md:delay-100 md:z-10" : ""}`}
+                                >
+                                    <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
+
+                                        <InputUser
+                                            user={apUser?.name}
+                                            type="name"
+                                            placeholder="Nombre (Opcional)"
+                                            border="border-t md:border-y"
+                                            icon="save"
+                                            onSave={(newValue, setStatus) => {
+                                                dispatch(changeData({ key: 'name', value: newValue }))
+                                            }}
+                                        />
+
+                                        <InputUser
+                                            user={apUser?.phone ? Number(apUser?.phone) : null}
+                                            type="phone"
+                                            placeholder="Teléfono"
+                                            border="border-y"
+                                            icon="save"
+                                            onSave={(newValue, setStatus) => {
+                                                dispatch(changeData({ key: 'phone', value: newValue }))
+                                            }}
+                                        />
+                                    </div>
+                                </GridComp>
+
+                                <div className="text-end w-full md:pe-[10%] my-2">
+                                    <button
+                                        className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
+                                        onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'address' ? 'address' : '')}
+                                        onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('address')}
+                                    >
+                                        Mis direcciones
+                                    </button>
+                                </div>
+                                <GridComp condition={chosenOption === 'address'} extraClass="md:absolute left-[110%] md:top-0 md:h-full md:w-3/4">
+
+                                    <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
+                                        <div className="md:mb-2 min-h-[58px]">
+                                            <p className="text-sm hidden md:block">Direcciones guardadas</p>
+                                            {apUser.address.length > 0 ? (
+                                                apUser.address.map((a: string, i: number) => {
+                                                    const isDeleting = deletingAddress === a;
+                                                    const isLast = apUser.address.length - 1 === i
+
+                                                    return (
+                                                        <GridComp key={a || i} condition={!isDeleting}>
+
+                                                            <div className={`flex justify-between border-[#ffffff50] ${isLast ? "border-t md:border-y" : "border-t"}`}>
+                                                                <p className="w-5/6 content-center ms-2">{a}</p>
+                                                                <div className="w-1/6 text-center content-center me-2">
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            setDeletingAddress(a);
+
+                                                                            const actualAddress = apUser.address.filter((f) => f !== a);
+                                                                            setTimeout(() => {
+                                                                                dispatch(changeData({ key: 'address', value: actualAddress }))
+                                                                            }, 500);
+
+                                                                        }}
+                                                                        className="p-2"
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                                            <path fill="currentColor" d="M18.36 19.78L12 13.41l-6.36 6.37l-1.42-1.42L10.59 12L4.22 5.64l1.42-1.42L12 10.59l6.36-6.36l1.41 1.41L13.41 12l6.36 6.36z" />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                        </GridComp>
+                                                    );
+                                                })
+                                            ) : (
+                                                <p className="p-2 text-sm opacity-70">No hay direcciones guardadas</p>
+                                            )}
+                                        </div>
+
+                                        <InputUser
+                                            user={""}
+                                            type="address"
+                                            placeholder="Dirección"
+                                            border="border-t md:border-y"
+                                            icon="save"
+                                            array={apUser?.address}
+                                            onSave={async (newValue, setStatus) => {
+                                                if (!newValue) return;
+
+                                                const updatedAddresses = [...apUser.address, String(newValue)]; +
+
+                                                    dispatch(changeData({ key: 'address', value: updatedAddresses }))
+
+                                            }}
+                                        />
+                                    </div>
+                                </GridComp>
+
+                                <div className="text-end w-full md:pe-[10%] my-2">
+                                    <button
+                                        className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
+                                        onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'pass' ? 'pass' : '')}
+                                        onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('pass')}
+                                    >
+                                        Cambiar contraseña
                                     </button>
                                 </div>
 
-                                <div className={`absolute top-full left-0 rounded-lg bg-[#fce49f] w-full min-h-8 px-3 py-2 mt-2 transition-all duration-500 shadow-md border border-[#f3d078]
-                                    ${errorAnimate && !user ? "opacity-100 translate-y-0 block" : "opacity-0 -translate-y-2 pointer-events-none hidden"}`}
+                                <GridComp condition={chosenOption === 'pass'} extraClass="md:absolute left-[110%] md:top-0 md:h-full md:w-3/4">
+                                    <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
+                                        <InputPass email={user?.[0].mail} />
+                                    </div>
+                                </GridComp>
+                                <div className="text-end w-full md:pe-[10%] my-2">
+                                    <button
+                                        className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
+                                        onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'fav' ? 'fav' : '')}
+                                        onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('fav')}
+                                    >
+                                        Ver mis favoritos
+                                    </button>
+                                </div>
+                                <GridComp condition={chosenOption === 'fav'} extraClass="md:absolute left-[110%] md:top-0 md:h-full md:w-3/4">
+                                    <FavsProducts />
+                                </GridComp>
+                                <div className="text-end w-full md:pe-[10%] my-2">
+                                    <button
+                                        className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
+                                        onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'hist' ? 'hist' : '')}
+                                        onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('hist')}
+                                    >
+                                        Historial de pedidos
+                                    </button>
+                                </div>
+
+                                <GridComp
+                                    condition={chosenOption === 'hist'}
                                 >
-                                    <p className="text-[#714e10] font-medium">{!user && errorUser}</p>
+                                    <div className="py-2">
+                                        <button className="cursor-pointer text-neutral-600 outline-none">Ver pedidos anteriores</button>
+                                    </div>
+                                </GridComp>
+
+                                <div className="mt-2 md:text-end md:pe-[10%]">
+                                    <button className="w-fit py-1 cursor-pointer outline-none" onClick={signOut}>
+                                        Cerrar sesión
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </GridComp>
+                    <GridComp condition={!user} extraClass="w-full max-w-120 justify-self-center ">
+                        <form
+                            className="flex flex-col gap-4 mb-2"
+                            onSubmit={(e: SubmitEvent<HTMLFormElement>) => {
+                                createAccount
+                                    ? signUser(e, dataAcc, (data: SignInWithPasswordCredentials) => supabase.auth.signInWithPassword(data), setAccessAccount, false, setErrorUser)
+                                    : signUser(e, dataAcc, (data: SignInWithPasswordCredentials) => supabase.auth.signUp(data), setAccessAccount, true, setErrorUser)
+                            }}
+                        >
+                            <div className="flex flex-col justify-between w-full gap-2 min-h-[110px]">
+                                <input
+                                    id="name-input"
+                                    name="name"
+                                    type="text"
+                                    placeholder="Nombre (opcional)"
+                                    value={dataAcc.name || ""}
+                                    onChange={handleChange}
+                                    className={`px-2 rounded border overflow-hidden duration-500 transition-all text-sm ease-in-out
+                                                ${!createAccount
+                                            ? "h-[34px] py-1 opacity-100 block"
+                                            : "h-0 border-y-0 py-0 opacity-0 pointer-events-none"
+                                        }`}
+                                />
+                                <input id="mail" name="mail" type="email" className="border px-2 py-1 rounded text-sm" placeholder="Email" value={dataAcc.mail || ""} onChange={handleChange} />
+                                <input id="password" name="password" type="password" className="border px-2 py-1 rounded text-sm" placeholder="Contraseña" value={dataAcc.password || ""} onChange={handleChange} />
+                            </div>
+
+                            <div className="text-center w-full md:w-28 [perspective:1000px]">
+                                <button
+                                    className={`relative w-full md:w-28 h-10 border rounded cursor-pointer duration-500 ease-in-out [transform-style:preserve-3d] transition-transform outline-none ${createAccount ? "[transform:rotateX(180deg)]" : "[transform:rotateX(0deg)]"}`}
+                                    type="submit"
+                                >
+                                    <span className="absolute inset-0 flex items-center justify-center backface-hidden bg-(--background) rounded font-medium">
+                                        Crear cuenta
+                                    </span>
+                                    <span className="absolute inset-0 flex items-center justify-center backface-hidden bg-(--background) rounded font-medium [transform:rotateX(180deg)]">
+                                        Acceder
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div className="flex mt-2">
+                            <p>{createAccount ? "No" : "Ya"} tienes cuenta?&nbsp;</p>
+                            <button
+                                className="cursor-pointer font-bold hover:underline bg-transparent border-0 p-0 outline-none"
+                                onClick={() => setCreateAccount(prev => !prev)}
+                            >
+                                {createAccount ? "Créala" : "Ingresa"}
+                            </button>
+                        </div>
+
+                        <div className={`absolute top-full left-0 rounded-lg bg-[#fce49f] w-full min-h-8 px-3 py-2 mt-2 transition-all duration-500 ease-in-out shadow-md border border-[#f3d078]
+                                    ${errorAnimate && !user ? "opacity-100 translate-y-0 block" : "opacity-0 -translate-y-2 pointer-events-none hidden"}`}
+                        >
+                            <p className="text-[#714e10] font-medium">{!user && errorUser}</p>
+                        </div>
+                    </GridComp>
                 </div>
-            </div>
+            </GridComp>
         </div >
     )
 }

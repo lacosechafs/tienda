@@ -13,7 +13,7 @@ export const SelectorNumber = ({
 
     return (
         <div
-            className="flex flex-col duration-300"
+            className="flex flex-col duration-300 ease-in-out"
             style={{
                 transform: `translateY(calc(-${digit * (fontSize + fontSize / 2)}px))`,
                 transitionDelay: `${delay}ms`,

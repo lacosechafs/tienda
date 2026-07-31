@@ -3,6 +3,7 @@ import { RootState } from '@/redux/makeStore'
 import { CatListType, dataProducts } from '@/types/types'
 import { useRef } from 'react'
 import { TransitionLink } from './transition-link'
+import { GridComp } from './grid-comp'
 
 export const ListCategories = ({ setOpenOptions, openOptions }: CatListType) => {
 
@@ -11,9 +12,9 @@ export const ListCategories = ({ setOpenOptions, openOptions }: CatListType) => 
     const catListRef = useRef<HTMLDivElement>(null)
 
     return (
-        <div ref={catListRef} className={`bg-(--backgroundlt) duration-500 overflow-hidden grid ${openOptions === "cat" ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
-            <div className='min-h-0'>
-                <div className="md:container-md mx-auto flex flex-row justify-center md:justify-start flex-wrap max-w-screen-lg pb-5">
+        <div ref={catListRef}>
+            <GridComp condition={openOptions === "cat"} extraClass="bg-(--backgroundlt) ">
+                <div className="md:container-md mx-auto flex flex-row justify-center md:justify-start flex-wrap max-w-full-lg pb-5">
                     {data?.map(c => {
                         const haveProducts = c.products.some((d: dataProducts) => d.catalog.length)
                         if (haveProducts) {
@@ -26,7 +27,7 @@ export const ListCategories = ({ setOpenOptions, openOptions }: CatListType) => 
                     })
                     }
                 </div>
-            </div>
+            </GridComp>
         </div>
     )
 }

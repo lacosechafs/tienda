@@ -1,6 +1,7 @@
 "use client"
 import { dataProducts } from "@/types/types"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { GridComp } from "../grid-comp"
 
 export const InputBycat = ({
     categoryName,
@@ -45,36 +46,31 @@ export const InputBycat = ({
     }, [currentProducts, isVisible])
 
     return (
-        <div className={`grid overflow-hidden duration-500 w-auto md:px-3
-                ${isVisible
-                ? "grid-rows-[1fr]"
-                : "delay-50 grid-rows-[0fr]"}
-                `}>
-            <div className='min-h-0'>
-                <a href={slug} onClick={() => setOpenOptions(null)}>
-                    <p className='font-bold text-[18px] border-b my-2'>
-                        {categoryName}
-                    </p>
-                </a>
+        <GridComp
+            condition={isVisible}
+            extraClass="w-auto md:px-3"
+        >
+            <a href={slug} onClick={() => setOpenOptions(null)}>
+                <p className='font-bold text-[18px] border-b my-2'>
+                    {categoryName}
+                </p>
+            </a>
 
-                {displayedProducts
-                    .map(p => {
-                        return (
-                            <div key={p.id} className={`grid overflow-hidden duration-500 
-                                    ${currentProducts.some(s => s.name === p.name)
-                                    ? "grid-rows-[1fr] starting:grid-rows-[0fr]"
-                                    : "grid-rows-[0fr]"}
-                                    `}>
-                                <div className='min-h-0'>
-                                    <p className='mb-1'>
-                                        {p.name}
-                                    </p>
-                                </div>
-                            </div>
-                        )
-                    })
-                }
-            </div>
-        </div>
+            {displayedProducts
+                .map(p => {
+                    return (
+                        <GridComp
+                            key={p.id}
+                            condition={currentProducts.some(s => s.name === p.name)}
+                        >
+                            <p className='mb-1'>
+                                {p.name}
+                            </p>
+                        </GridComp>
+
+                    )
+                })
+            }
+        </GridComp>
     )
 }

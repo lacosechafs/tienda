@@ -10,7 +10,7 @@ export const BodyComp = ({ children }: Readonly<{
 }>) => {
 
     return (
-        <div className="flex w-full min-h-screen justify-center overflow-x-hidden">
+        <div className="w-full max-w-screen-2xl self-center flex justify-center">
             <PageWrapper>
                 {children}
                 <AlertStock />

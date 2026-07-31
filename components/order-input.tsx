@@ -1,6 +1,6 @@
 import { EntriesOrderType, InputOrderType } from "@/types/types";
 
-export const OrderInput = ({ label, name, placeholder, value, setValue, allAddress, textCheck }: InputOrderType) => {
+export const OrderInput = ({ label, name, placeholder, value, setValue }: InputOrderType) => {
 
     let query = String(value?.data)?.trim().toLowerCase() || "";
 

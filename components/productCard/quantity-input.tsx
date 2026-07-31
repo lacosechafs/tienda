@@ -40,7 +40,7 @@ export const QuantityInput = ({ id, size, name, haveStock, unit, price, qStock }
             </div>
 
             <button
-                className={`rounded-full w-6 h-6 bg-zinc-500 duration-500 ${currentQuantity >= qStock && qStock > 0 ? "opacity-50" : "opacity-100"}`}
+                className={`rounded-full w-6 h-6 bg-zinc-500 duration-500 ease-in-out ${currentQuantity >= qStock && qStock > 0 ? "opacity-50" : "opacity-100"}`}
                 onClick={() => {
                     if (currentQuantity < qStock && haveStock) {
                         dispatch(addToCart({ id, name, size, public_price: price, unit }))
