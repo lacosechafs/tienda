@@ -6,7 +6,8 @@ const initialState: UserState = {
         address: [],
         phone: null,
         name: '',
-        favs: []
+        favs: [],
+        orders: []
     },
 }
 
@@ -19,6 +20,7 @@ export const userSlice = createSlice({
             state.data.phone = action.payload.phone;
             state.data.name = action.payload.name;
             state.data.favs = action.payload.favs;
+            state.data.orders = action.payload.orders;
         },
         changeData: (state, action: PayloadAction<UserPayload>) => {
             const { key, value } = action.payload;

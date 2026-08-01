@@ -22,10 +22,6 @@ export const BoxProduct = ({
                 const valueB = (b.unit === "kg" || b.unit === "l") ? b.size * 1000 : b.size
                 return valueB - valueA;
             })
-            .map(item => ({
-                ...item,
-                finalPrice: calculateFinalPrice(item)
-            }));
     }, [catalog]);
 
     const [ids, setIds] = useState<number[]>([]);

@@ -15,7 +15,8 @@ import { useAppSelector } from "@/hooks/useRedux"
 import { RootState } from "@/redux/makeStore"
 import { changeData, setApData } from "@/redux/userSlice"
 import { GridComp } from "./grid-comp"
-import { FavsProducts } from "./favs-products"
+import { FavsProducts } from "./navbar/favs-products"
+import { OrderHistory } from "./navbar/order-history"
 
 export const FormSign = ({ openOptions }: FormSignType) => {
 
@@ -24,7 +25,6 @@ export const FormSign = ({ openOptions }: FormSignType) => {
 
     const [dataAcc, setDataAcc] = useState<Record<string, string>>({ name: "", mail: "", password: "" })
     const [createAccount, setCreateAccount] = useState<boolean>(true)
-    const [accessAccount, setAccessAccount] = useState<boolean>(false)
     const [chosenOption, setChosenOption] = useState<string>('')
     const [errorUser, setErrorUser] = useState<string | null>(null)
     const [errorAnimate, setErrorAnimate] = useState<boolean>(false)
@@ -37,37 +37,37 @@ export const FormSign = ({ openOptions }: FormSignType) => {
         setDataAcc(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
-    const { userData } = useGetSession(accessAccount);
-
     const apUser = useAppSelector((state: RootState) => state.user.data)
 
     const supabase = createClient()
     const [user, setUser] = useState<any>(null)
 
-    useEffect(() => {
+    const { userData } = useGetSession();
 
+    useEffect(() => {
         if (userData) {
             setUser(userData)
-            dispatch(setCartProducts(userData[0].saved_cart))
+            dispatch(setCartProducts(userData[0]?.saved_cart || []))
             dispatch(setApData(userData[0]))
+        } else {
+            setUser(null)
         }
-
-    }, [userData])
+    }, [userData, dispatch])
 
     const signOut = async () => {
         const { error } = await supabase.auth.signOut()
 
         if (error) {
-            console.error("No pudimos desloguearte de forma correcta:", error)
+            console.error("Error al cerrar sesión:", error)
+            return
         }
 
-        setAccessAccount(prev => !prev)
         setUser(null)
         setDataAcc({ name: "", mail: "", password: "" })
-        dispatch(setCartProducts([]))
+
         router.push('/')
         router.refresh()
-
+        setDataAcc({ name: "", mail: "", password: "" })
     }
 
     useEffect(() => {
@@ -99,13 +99,13 @@ export const FormSign = ({ openOptions }: FormSignType) => {
                 <div>
                     <GridComp condition={user}>
                         <div className="p-2 mb-2">
-                            <p className="h-[34px] text-[24px] mb-4 md:justify-self-center">
-                                ¡Hola {apUser?.name || "Usuario"}!
+                            <p className="h-[34px] text-[24px] mb-4 lg:justify-self-center">
+                                {apUser?.name ? `Hola ${apUser?.name}` : "Hola"}!
                             </p>
-                            <div className="relative md:border-e md:w-1/2">
-                                <div className="text-end w-full md:pe-[10%] my-2">
+                            <div className="relative lg:border-e lg:w-1/2">
+                                <div className="text-end w-full lg:pe-[10%] my-2">
                                     <button
-                                        className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
+                                        className="cursor-pointer text-start w-full lg:w-fit font-semibold hover:underline my-1 outline-none"
                                         onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'data' ? 'data' : '')}
                                         onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('data')}
                                     >
@@ -114,16 +114,16 @@ export const FormSign = ({ openOptions }: FormSignType) => {
                                 </div>
                                 <GridComp
                                     condition={chosenOption === 'data'}
-                                    extraClass={`md:absolute left-[110%] md:top-0 md:h-full md:w-3/4 `}
-                                    class0fr={`${chosenOption === '' ? "md:grid-rows-[1fr] md:opacity-100 md:delay-100 md:z-10" : ""}`}
+                                    extraClass={`lg:absolute left-[110%] lg:top-0 lg:h-full lg:w-3/4 `}
+                                    class0fr={`${chosenOption === '' ? "lg:grid-rows-[1fr] lg:opacity-100 lg:delay-100 lg:z-10" : ""}`}
                                 >
-                                    <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
+                                    <div className="m-2 lg:m-0 lg:flex lg:flex-col lg:h-full">
 
                                         <InputUser
                                             user={apUser?.name}
                                             type="name"
                                             placeholder="Nombre (Opcional)"
-                                            border="border-t md:border-y"
+                                            border="border-t lg:border-y"
                                             icon="save"
                                             onSave={(newValue, setStatus) => {
                                                 dispatch(changeData({ key: 'name', value: newValue }))
@@ -143,20 +143,20 @@ export const FormSign = ({ openOptions }: FormSignType) => {
                                     </div>
                                 </GridComp>
 
-                                <div className="text-end w-full md:pe-[10%] my-2">
+                                <div className="text-end w-full lg:pe-[10%] my-2">
                                     <button
-                                        className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
+                                        className="cursor-pointer text-start w-full lg:w-fit font-semibold hover:underline my-1 outline-none"
                                         onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'address' ? 'address' : '')}
                                         onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('address')}
                                     >
                                         Mis direcciones
                                     </button>
                                 </div>
-                                <GridComp condition={chosenOption === 'address'} extraClass="md:absolute left-[110%] md:top-0 md:h-full md:w-3/4">
+                                <GridComp condition={chosenOption === 'address'} extraClass="lg:absolute left-[110%] lg:top-0 lg:h-full lg:w-3/4">
 
-                                    <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
-                                        <div className="md:mb-2 min-h-[58px]">
-                                            <p className="text-sm hidden md:block">Direcciones guardadas</p>
+                                    <div className="m-2 lg:m-0 lg:flex lg:flex-col lg:h-full">
+                                        <div className="lg:mb-2 min-h-[58px]">
+                                            <p className="text-sm hidden lg:block">Direcciones guardadas</p>
                                             {apUser.address.length > 0 ? (
                                                 apUser.address.map((a: string, i: number) => {
                                                     const isDeleting = deletingAddress === a;
@@ -165,7 +165,7 @@ export const FormSign = ({ openOptions }: FormSignType) => {
                                                     return (
                                                         <GridComp key={a || i} condition={!isDeleting}>
 
-                                                            <div className={`flex justify-between border-[#ffffff50] ${isLast ? "border-t md:border-y" : "border-t"}`}>
+                                                            <div className={`flex justify-between border-[#ffffff50] ${isLast ? "border-t lg:border-y" : "border-t"}`}>
                                                                 <p className="w-5/6 content-center ms-2">{a}</p>
                                                                 <div className="w-1/6 text-center content-center me-2">
                                                                     <button
@@ -199,7 +199,7 @@ export const FormSign = ({ openOptions }: FormSignType) => {
                                             user={""}
                                             type="address"
                                             placeholder="Dirección"
-                                            border="border-t md:border-y"
+                                            border="border-t lg:border-y"
                                             icon="save"
                                             array={apUser?.address}
                                             onSave={async (newValue, setStatus) => {
@@ -214,9 +214,9 @@ export const FormSign = ({ openOptions }: FormSignType) => {
                                     </div>
                                 </GridComp>
 
-                                <div className="text-end w-full md:pe-[10%] my-2">
+                                <div className="text-end w-full lg:pe-[10%] my-2">
                                     <button
-                                        className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
+                                        className="cursor-pointer text-start w-full lg:w-fit font-semibold hover:underline my-1 outline-none"
                                         onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'pass' ? 'pass' : '')}
                                         onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('pass')}
                                     >
@@ -224,26 +224,26 @@ export const FormSign = ({ openOptions }: FormSignType) => {
                                     </button>
                                 </div>
 
-                                <GridComp condition={chosenOption === 'pass'} extraClass="md:absolute left-[110%] md:top-0 md:h-full md:w-3/4">
-                                    <div className="m-2 md:m-0 md:flex md:flex-col md:h-full">
+                                <GridComp condition={chosenOption === 'pass'} extraClass="lg:absolute left-[110%] lg:top-0 lg:h-full lg:w-3/4">
+                                    <div className="m-2 lg:m-0 lg:flex lg:flex-col lg:h-full">
                                         <InputPass email={user?.[0].mail} />
                                     </div>
                                 </GridComp>
-                                <div className="text-end w-full md:pe-[10%] my-2">
+                                <div className="text-end w-full lg:pe-[10%] my-2">
                                     <button
-                                        className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
+                                        className="cursor-pointer text-start w-full lg:w-fit font-semibold hover:underline my-1 outline-none"
                                         onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'fav' ? 'fav' : '')}
                                         onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('fav')}
                                     >
                                         Ver mis favoritos
                                     </button>
                                 </div>
-                                <GridComp condition={chosenOption === 'fav'} extraClass="md:absolute left-[110%] md:top-0 md:h-full md:w-3/4">
+                                <GridComp condition={chosenOption === 'fav'} extraClass="lg:absolute left-[100%] w-full lg:top-0 lg:h-full">
                                     <FavsProducts />
                                 </GridComp>
-                                <div className="text-end w-full md:pe-[10%] my-2">
+                                <div className="text-end w-full lg:pe-[10%] my-2">
                                     <button
-                                        className="cursor-pointer text-start w-full md:w-fit font-semibold hover:underline my-1 outline-none"
+                                        className="cursor-pointer text-start w-full lg:w-fit font-semibold hover:underline my-1 outline-none"
                                         onClick={() => window.innerWidth < 768 && setChosenOption(prev => prev !== 'hist' ? 'hist' : '')}
                                         onMouseEnter={() => window.innerWidth >= 768 && setChosenOption('hist')}
                                     >
@@ -252,14 +252,15 @@ export const FormSign = ({ openOptions }: FormSignType) => {
                                 </div>
 
                                 <GridComp
-                                    condition={chosenOption === 'hist'}
+                                    condition={chosenOption === 'hist'} extraClass="lg:absolute left-[110%] lg:top-0 lg:h-full w-full"
                                 >
-                                    <div className="py-2">
-                                        <button className="cursor-pointer text-neutral-600 outline-none">Ver pedidos anteriores</button>
-                                    </div>
+                                    {apUser.orders
+                                        ? <OrderHistory />
+                                        : <p className="cursor-pointer text-neutral-600 outline-none">Aún no has realizado pedidos</p>
+                                    }
                                 </GridComp>
 
-                                <div className="mt-2 md:text-end md:pe-[10%]">
+                                <div className="mt-2 lg:text-end lg:pe-[10%]">
                                     <button className="w-fit py-1 cursor-pointer outline-none" onClick={signOut}>
                                         Cerrar sesión
                                     </button>
@@ -272,8 +273,8 @@ export const FormSign = ({ openOptions }: FormSignType) => {
                             className="flex flex-col gap-4 mb-2"
                             onSubmit={(e: SubmitEvent<HTMLFormElement>) => {
                                 createAccount
-                                    ? signUser(e, dataAcc, (data: SignInWithPasswordCredentials) => supabase.auth.signInWithPassword(data), setAccessAccount, false, setErrorUser)
-                                    : signUser(e, dataAcc, (data: SignInWithPasswordCredentials) => supabase.auth.signUp(data), setAccessAccount, true, setErrorUser)
+                                    ? signUser(e, dataAcc, (data: SignInWithPasswordCredentials) => supabase.auth.signInWithPassword(data), false, setErrorUser)
+                                    : signUser(e, dataAcc, (data: SignInWithPasswordCredentials) => supabase.auth.signUp(data), true, setErrorUser)
                             }}
                         >
                             <div className="flex flex-col justify-between w-full gap-2 min-h-[110px]">
@@ -294,9 +295,9 @@ export const FormSign = ({ openOptions }: FormSignType) => {
                                 <input id="password" name="password" type="password" className="border px-2 py-1 rounded text-sm" placeholder="Contraseña" value={dataAcc.password || ""} onChange={handleChange} />
                             </div>
 
-                            <div className="text-center w-full md:w-28 [perspective:1000px]">
+                            <div className="text-center w-full lg:w-28 [perspective:1000px]">
                                 <button
-                                    className={`relative w-full md:w-28 h-10 border rounded cursor-pointer duration-500 ease-in-out [transform-style:preserve-3d] transition-transform outline-none ${createAccount ? "[transform:rotateX(180deg)]" : "[transform:rotateX(0deg)]"}`}
+                                    className={`relative w-full lg:w-28 h-10 border rounded cursor-pointer duration-500 ease-in-out [transform-style:preserve-3d] transition-transform outline-none ${createAccount ? "[transform:rotateX(180deg)]" : "[transform:rotateX(0deg)]"}`}
                                     type="submit"
                                 >
                                     <span className="absolute inset-0 flex items-center justify-center backface-hidden bg-(--background) rounded font-medium">

@@ -6,15 +6,15 @@ export interface Props {
 
 export interface dataCatalog {
     available_discount: boolean;
-    end_discount: string | null | Date;
+    bulk_stock: number;
+    end_discount: string | number | Date;
     id: number;
     percentage_discount: number;
     public_price: number;
     size: number;
-    start_discount: string | null | Date;
+    start_discount: string | number | Date;
     min_stock: number;
     unit: string;
-    bulk_stock: number;
     product_id: number;
     stored_stock: number;
     featured: boolean;
@@ -52,11 +52,19 @@ export interface ProductsState {
     stock: boolean;
 }
 
+export interface OrdersUserType extends OrderType {
+    id: string;
+    name: string;
+    uuid: string;
+    created_at: Date;
+}
+
 export interface UserObjState {
     address: Array<string>;
     phone: number | null;
     name: string;
     favs: Array<number>;
+    orders?: Array<OrdersUserType>;
 }
 
 export interface UserState {
@@ -122,21 +130,17 @@ export interface OrderType {
 
 export type ProductPayload = Omit<SliceType, 'quantity'>
 
-export interface ValueOrderType {
-    data: string | null | number;
-    check: boolean
-}
-
 export interface EntriesOrderType {
-    address: ValueOrderType;
-    phone: ValueOrderType
+    name: string | null;
+    address: string | null;
+    phone: number | null
 }
 
 export interface InputOrderType {
     label: string;
     name: keyof EntriesOrderType;
     placeholder: string;
-    value: ValueOrderType;
+    value: string | null | number;
     setValue: Dispatch<SetStateAction<EntriesOrderType>>;
 }
 
@@ -151,6 +155,7 @@ export interface GridCompType {
     extraClass?: string;
     class1fr?: string;
     class0fr?: string;
+    disableOpacity?: boolean
 
 }
 
@@ -165,13 +170,20 @@ export interface PropsBoxProduct extends BasePropsProduct {
 }
 
 export interface PropsDataProduct extends BasePropsProduct {
-    orderCatalog: Array<OrderItemCatalog>;
+    orderCatalog: Array<dataCatalog>;
 }
 
 export interface PropsFavProduct {
     name: string;
 }
 
-export type OrderItemCatalog = dataCatalog & {
-    finalPrice: number;
-};
+export interface dataOrderType {
+    id: number;
+    name: string;
+    public_price: number;
+    quantity: number;
+    size: number;
+    unit: string;
+}
+
+export type ProductGroup = Record<string, Array<dataOrderType> | undefined>

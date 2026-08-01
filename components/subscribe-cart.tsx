@@ -13,7 +13,8 @@ export const SubscribeCart = () => {
     const dispatch = useAppDispatch()
 
     const [isFullyLoaded, setIsFullyLoaded] = useState(false)
-    const [userLogged, setUserLogged] = useState("")
+
+    const userLoggedRef = useRef<string | null>(null)
 
     const lastSavedStateRef = useRef<{ cart: any; user: any }>({
         cart: null,
@@ -23,45 +24,39 @@ export const SubscribeCart = () => {
     useEffect(() => {
         let isMounted = true
 
-        async function fetchInitialCart() {
-            try {
-                const { data: { user } } = await supabase.auth.getUser()
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (session?.user) {
+                if (!isMounted) return
+                userLoggedRef.current = session.user.id
 
-                if (user) {
-                    if (!isMounted) return
-                    setUserLogged(user.id)
+                const { data } = await supabase
+                    .from('profiles')
+                    .select('saved_cart')
+                    .eq('id', session.user.id)
+                    .single()
 
-                    const { data } = await supabase
-                        .from('profiles')
-                        .select('saved_cart')
-                        .eq('id', user.id)
-                        .single()
-
-                    if (data?.saved_cart && isMounted) {
-                        dispatch(setCartProducts(data.saved_cart))
-                        lastSavedStateRef.current.cart = data.saved_cart
-                    }
-                } else {
-                    const localCart = window.localStorage.getItem('cart')
-                    if (localCart && isMounted) {
-                        const parsedCart = JSON.parse(localCart)
-                        dispatch(setCartProducts(parsedCart))
-                        lastSavedStateRef.current.cart = parsedCart
-                    }
+                if (data?.saved_cart && isMounted) {
+                    dispatch(setCartProducts(data.saved_cart))
+                    lastSavedStateRef.current.cart = data.saved_cart
                 }
-            } catch (error) {
-                console.error('Error al traer el carrito inicial:', error)
-            } finally {
-                if (isMounted) {
-                    setIsFullyLoaded(true)
-                }
+            } else {
+                if (!isMounted) return
+                userLoggedRef.current = null
+
+                const localCart = window.localStorage.getItem('cart')
+                const parsedCart = localCart ? JSON.parse(localCart) : []
+                dispatch(setCartProducts(parsedCart))
+                lastSavedStateRef.current.cart = parsedCart
             }
-        }
 
-        fetchInitialCart()
+            if (isMounted) {
+                setIsFullyLoaded(true)
+            }
+        })
 
         return () => {
             isMounted = false
+            subscription.unsubscribe()
         }
     }, [dispatch])
 
@@ -71,7 +66,8 @@ export const SubscribeCart = () => {
         const unsubscribe = store.subscribe(async () => {
             const state = (store.getState() as unknown) as RootState
             const dataToSync = state.cart.products
-            const userToSync = state.user.data
+
+            const { orders, ...userToSync } = state.user.data || {}
 
             const cartChanged = JSON.stringify(lastSavedStateRef.current.cart) !== JSON.stringify(dataToSync)
             const userChanged = JSON.stringify(lastSavedStateRef.current.user) !== JSON.stringify(userToSync)
@@ -80,13 +76,15 @@ export const SubscribeCart = () => {
                 return
             }
 
+            const currentUserId = userLoggedRef.current
+
             lastSavedStateRef.current = {
                 cart: dataToSync,
                 user: userToSync
             }
 
             try {
-                if (!userLogged) {
+                if (!currentUserId) {
                     if (dataToSync) {
                         window.localStorage.setItem('cart', JSON.stringify(dataToSync))
                     }
@@ -98,7 +96,7 @@ export const SubscribeCart = () => {
                 await supabase
                     .from('profiles')
                     .update(allInfo)
-                    .eq('id', userLogged)
+                    .eq('id', currentUserId)
 
             } catch (error) {
                 console.error('Error al guardar productos:', error)
@@ -108,7 +106,7 @@ export const SubscribeCart = () => {
         return () => {
             unsubscribe()
         }
-    }, [store, isFullyLoaded, userLogged])
+    }, [store, isFullyLoaded])
 
     return null
 }

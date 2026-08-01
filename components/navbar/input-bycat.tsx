@@ -48,7 +48,7 @@ export const InputBycat = ({
     return (
         <GridComp
             condition={isVisible}
-            extraClass="w-auto md:px-3"
+            extraClass="w-auto lg:px-3"
         >
             <a href={slug} onClick={() => setOpenOptions(null)}>
                 <p className='font-bold text-[18px] border-b my-2'>

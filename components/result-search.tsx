@@ -43,7 +43,7 @@ export const ResultSearch = ({ findProduct, setOpenOptions, openOptions }: Input
             class1fr="my-1"
             class0fr="my-0"
         >
-            <div className='grid md:grid-flow-row-dense md:[grid-template-columns:repeat(auto-fill,minmax(270px,1fr))]'>
+            <div className='grid lg:grid-flow-row-dense lg:[grid-template-columns:repeat(auto-fill,minmax(270px,1fr))]'>
                 {products.map(f => {
                     const productsByCategory = flatProducts.filter(m =>
                         m.category === f.name

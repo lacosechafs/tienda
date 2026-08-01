@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useRedux'
 import { RootState } from '@/redux/makeStore'
 import { dataCatalog, dataProducts } from '@/types/types'
 import { useEffect, useMemo, useState } from 'react'
-import { QuantityInput } from './productCard/quantity-input'
+import { QuantityInput } from '../productCard/quantity-input'
 import { changeData } from '@/redux/userSlice'
 
 export const FavsProducts = () => {
@@ -51,8 +51,6 @@ export const FavsProducts = () => {
         }
     }, [favs, visibleProducts])
 
-    console.log(visibleProducts, favs)
-
     useEffect(() => {
         if (!visibleProducts.length) return
 
@@ -89,8 +87,8 @@ export const FavsProducts = () => {
     }, [productSelected, visibleProducts])
 
     return (
-        <div className='flex flex-col justify-between h-full'>
-            <div className={`flex flex-1 content-start flex-wrap duration-500 pe-3 overflow-y-scroll scrollbar-thin ${visibleProducts.length > 0 ? "opacity-100 delay-500 transition-discrete starting:opacity-0 block" : "hidden opacity-0"}`}>
+        <div className='flex flex-col justify-between h-full lg:ps-[10%]'>
+            <div className={`flex flex-1 content-start flex-wrap duration-500 pe-3 overflow-auto scrollbar-thin ${visibleProducts.length > 0 ? "opacity-100 delay-500 transition-discrete starting:opacity-0 block" : "hidden opacity-0"}`}>
                 {visibleProducts?.map((m, i) => {
                     return (
                         <div
@@ -127,10 +125,10 @@ export const FavsProducts = () => {
                 }
             </div>
             <div className={`duration-500 ${visibleProducts.length === 0 ? "opacity-100 delay-500 transition-discrete starting:opacity-0 block" : "hidden opacity-0"}`}>
-                <p>No tienes productos favoritos</p>
+                <p className="cursor-pointer text-neutral-600 outline-none">No tienes productos favoritos</p>
             </div>
             <div className={`flex justify-between duration-500 overflow-hidden h-[46px] ${visibleProducts.length > 0 ? "opacity-100 delay-500 transition-discrete starting:opacity-0 block" : "hidden opacity-0"}`}>
-                <div className='flex flex-col duration-500'
+                <div className='flex flex-col duration-500 md:w-[90%]'
                     style={{ transform: `translateY(-${productSelected.index * 42}px)` }}
                 >
                     {visibleProducts?.map((m, i) => {

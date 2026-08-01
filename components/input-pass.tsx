@@ -117,7 +117,7 @@ export const InputPass = ({ email }: { email: string }) => {
     return (
         <form onSubmit={handleSubmit} className="flex flex-col relative">
             <label htmlFor="CurrentPass" className="text-sm">Contraseña Anterior</label>
-            <div className="flex justify-between border-t md:border-y md:mb-2 border-[#ffffff50] relative">
+            <div className="flex justify-between border-t lg:border-y lg:mb-2 border-[#ffffff50] relative">
                 <input
                     id="CurrentPass"
                     type="password"
@@ -161,7 +161,7 @@ export const InputPass = ({ email }: { email: string }) => {
             </div>
 
             <label htmlFor="NewPass" className="text-sm">Contraseña Nueva</label>
-            <div className="flex justify-between border-t md:border-y md:mb-2 border-[#ffffff50]">
+            <div className="flex justify-between border-t lg:border-y lg:mb-2 border-[#ffffff50]">
                 <input
                     id="NewPass"
                     type="password"

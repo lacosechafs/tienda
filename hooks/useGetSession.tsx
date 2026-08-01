@@ -5,40 +5,39 @@ import { useEffect, useState } from 'react'
 
 const supabase = createClient()
 
-export const useGetSession = (triggerReload?: any) => {
+export const useGetSession = () => {
     const [userData, setUserData] = useState<any>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         let isMounted = true
 
-        const fetchUser = async () => {
-            try {
-                const { data: { user } } = await supabase.auth.getUser()
-
-                if (user && isMounted) {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            async (event, session) => {
+                if (session?.user) {
                     const { data: dataProf } = await supabase
                         .from('profiles')
-                        .select('*')
-                        .eq('id', user.id)
+                        .select(`*,orders(*)`)
+                        .eq('id', session.user.id)
 
-                    if (dataProf && isMounted) {
+                    if (isMounted) {
                         setUserData(dataProf)
                     }
+                } else if (isMounted) {
+                    setUserData(null)
                 }
-            } catch (error) {
-                console.error("Error al obtener sesión:", error)
-            } finally {
-                if (isMounted) setLoading(false)
-            }
-        }
 
-        fetchUser()
+                if (isMounted) {
+                    setLoading(false)
+                }
+            }
+        )
 
         return () => {
             isMounted = false
+            subscription.unsubscribe()
         }
-    }, [triggerReload])
+    }, [])
 
     return { userData, loading }
 }

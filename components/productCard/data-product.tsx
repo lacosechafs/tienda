@@ -87,7 +87,7 @@ export const DataProduct = ({
                             {orderCatalog.length > 0
                                 ? orderCatalog.map(d => {
                                     const qStock = (d.bulk_stock + d.stored_stock) - d.min_stock;
-                                    const { id, size, unit, finalPrice } = d;
+                                    const { id, size, unit, public_price } = d;
 
                                     return (
                                         <div key={title + size} className={`flex items-center justify-between my-1 ${qStock > 0 ? "opacity-100" : "opacity-50"}`}>
@@ -96,14 +96,14 @@ export const DataProduct = ({
                                                 size={size}
                                                 unit={unit}
                                                 haveStock={qStock > 0}
-                                                price={finalPrice}
+                                                price={public_price}
                                             />
                                             <QuantityInput
                                                 id={id}
                                                 size={size}
                                                 name={name}
                                                 haveStock={qStock > 0}
-                                                price={finalPrice}
+                                                price={public_price}
                                                 qStock={qStock}
                                                 unit={unit}
                                             />

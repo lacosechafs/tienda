@@ -1,6 +1,11 @@
 import { Dispatch, SetStateAction, SubmitEvent } from "react";
 
-export async function signUser(e: SubmitEvent<HTMLFormElement>, dataAcc: Record<string, string>, action: (data: any) => Promise<any>, refresh: Dispatch<SetStateAction<boolean>>, isSignUp: boolean, setErrorUser: Dispatch<SetStateAction<any>>) {
+export async function signUser(
+    e: SubmitEvent<HTMLFormElement>,
+    dataAcc: Record<string, string>,
+    action: (data: any) => Promise<any>,
+    isSignUp: boolean,
+    setErrorUser: Dispatch<SetStateAction<any>>) {
     e.preventDefault()
 
     setErrorUser(null)
@@ -69,8 +74,6 @@ export async function signUser(e: SubmitEvent<HTMLFormElement>, dataAcc: Record<
 
             }
         }
-
-        refresh(prev => !prev)
 
     } catch (error) {
         setErrorUser((error as any).message)

@@ -28,14 +28,9 @@ export const MyCart = () => {
   const [step, setStep] = useState<number>(1)
 
   const [dataOrder, setDataOrder] = useState<EntriesOrderType>({
-    address: {
-      data: '',
-      check: false
-    },
-    phone: {
-      data: null,
-      check: false
-    },
+    name: '',
+    address: '',
+    phone: null,
   })
 
   const { userData } = useGetSession();
@@ -87,17 +82,16 @@ export const MyCart = () => {
   }))
 
   const sendOrder = async () => {
-    if (!groupByProduct.length || !dataOrder.address.data) return
-
+    if (!groupByProduct.length || !dataOrder.address) return
 
     const totalToPay = getTotal(productsNoStock, myCart.products)
-
     const orderData = {
-      uuid: userData[0]?.id || null,
+      uuid: userData?.[0].id || null,
       products: groupByProduct,
-      address: String(dataOrder.address.data ?? ""),
-      phone: dataOrder.phone.data ? Number(dataOrder.phone.data) : apUser.phone,
-      total_pay: totalToPay
+      address: String(dataOrder.address ?? ""),
+      phone: dataOrder.phone ? Number(dataOrder.phone) : apUser.phone,
+      total_pay: totalToPay,
+      name: dataOrder.name
     }
 
     const succes = await confirmOrder(orderData)
@@ -117,19 +111,19 @@ export const MyCart = () => {
     }
   }
 
-  const openAddress = apUser.address.some(s => s.includes(String(dataOrder.address.data)));
+  const openAddress = apUser.address.some(s => s.includes(String(dataOrder.address)));
 
   return (
     <>
       <div
-        className={`hidden md:block shrink-0 transition-all duration-1000 ease-in-out pointer-events-none ${myCart.isOpen ? "w-screen md:max-[1999px]:w-[362px] min-[2000px]:w-0" : "w-0"
+        className={`hidden lg:block shrink-0 transition-all duration-1000 ease-in-out pointer-events-none ${myCart.isOpen ? "w-screen lg:max-[1999px]:w-[362px] min-[2000px]:w-0" : "w-0"
           }`}
       />
       <div
-        className={`fixed top-[60px] right-0 h-[calc(100vh-60px)] z-50 transition-all duration-1000 ease-in-out ${myCart.isOpen ? "w-screen md:w-[362px] opacity-100" : "w-0 opacity-0 pointer-events-none"
+        className={`fixed top-[60px] right-0 h-[calc(100vh-60px)] z-50 transition-all duration-1000 ease-in-out ${myCart.isOpen ? "w-screen lg:w-[362px] opacity-100" : "w-0 opacity-0 pointer-events-none"
           }`}
       >
-        <div className="flex flex-col w-screen md:w-[350px] h-full max-h-[calc(100vh-60px)] overflow-auto bg-(--backgroundlt)">
+        <div className="flex flex-col w-screen lg:w-[350px] h-full max-h-[calc(100vh-60px)] overflow-auto bg-(--backgroundlt)">
           <h2 className="my-2 whitespace-nowrap px-2">Carrito de compras</h2>
 
           <div className={`flex overflow-hidden bg-(--backgroundlt) flex-1`}>
@@ -139,7 +133,7 @@ export const MyCart = () => {
             `}>
 
               <div
-                className="w-screen md:w-[350px] min-w-screen md:min-w-[350px] h-full flex-1 flex flex-col"
+                className="w-screen lg:w-[350px] min-w-screen lg:min-w-[350px] h-full flex-1 flex flex-col"
               >
                 <div className="overflow-y-scroll scrollbar-thin flex-1">
                   {groupByProduct.length > 0 &&
@@ -296,100 +290,140 @@ export const MyCart = () => {
               </div>
 
               <div
-                className="w-full md:w-[350px] min-w-screen md:min-w-[350px] h-full flex-1 flex flex-col relative"
+                className="w-full lg:w-[350px] min-w-screen lg:min-w-[350px] h-full flex-1 flex flex-col relative"
               >
                 <div className="overflow-y-scroll scrollbar-thin flex-1">
                   <div className="px-2">
-                    <h2>Revisa tus datos</h2>
-                    <div>
-                      <h3 className="my-2">Teléfono</h3>
-                      {apUser?.phone &&
-                        < div className="flex justify-between">
-                          <p>{apUser?.phone}</p>
-                          <button onClick={() => setOpenModPhone(prev => !prev)}>
-                            Editar número
-                          </button>
-                        </div>
-                      }
-                      <GridComp
-                        condition={Number(apUser?.phone) === 0 || openModPhone}
-                      >
-                        <OrderInput
-                          label="Confirma tu teléfono"
-                          name="phone"
-                          placeholder="Teléfono"
-                          value={dataOrder.phone}
-                          setValue={setDataOrder}
-                        />
-                        <GridComp
-                          condition={Number(dataOrder.phone.data) !== 0 && Number(dataOrder.phone.data) !== apUser.phone}
-                          class1fr="delay-500"
-                        >
-                          <button
-                            onClick={() => { dispatch(changeData({ key: "phone", value: dataOrder.phone.data })); setOpenModPhone(false); setDataOrder(prev => ({ ...prev, phone: { ...prev.phone, data: null } })) }}
-                          >
-                            Modificar número actual
-                          </button>
-                        </GridComp>
-                      </GridComp>
-                    </div>
-
-                    <div>
-                      <h3 className="my-2">Dirección de envio</h3>
-
-                      <OrderInput
-                        label="Indica nueva dirección"
-                        name="address"
-                        placeholder="Dirección"
-                        value={dataOrder.address}
-                        setValue={setDataOrder}
-                      />
-
-                      <GridComp
-                        condition={!openAddress}
-                      >
-                        <button
-                          onClick={() => dispatch(changeData({ key: "address", value: [...apUser.address, dataOrder.address.data] }))}
-                        >
-                          Guardar dirección
-                        </button>
-                      </GridComp>
-
-                      <GridComp
-                        condition={openAddress}
-                      >
+                    {userData
+                      ? <div>
+                        <h2>Revisa tus datos</h2>
                         <div>
-                          {apUser?.address?.map((address, i) => {
-                            let query = String(dataOrder.address?.data)?.trim().toLowerCase() || "";
-                            const matches = query.length > 0 && (query.length !== address.length && address.toLowerCase().includes(query));
-
-                            return (
-                              <GridComp
-                                key={i}
-                                condition={matches}
-                                class1fr="my-1"
-                                class0fr="my-0"
+                          <h3 className="my-2">Teléfono</h3>
+                          {apUser?.phone &&
+                            < div className="flex justify-between">
+                              <p>{apUser?.phone}</p>
+                              <button onClick={() => setOpenModPhone(prev => !prev)}>
+                                Editar número
+                              </button>
+                            </div>
+                          }
+                          <GridComp
+                            condition={Number(apUser?.phone) === 0 || openModPhone}
+                          >
+                            <OrderInput
+                              label="Confirma tu teléfono"
+                              name="phone"
+                              placeholder="Teléfono"
+                              value={dataOrder.phone}
+                              setValue={setDataOrder}
+                            />
+                            <GridComp
+                              condition={Number(dataOrder.phone) !== 0 && Number(dataOrder.phone) !== apUser.phone}
+                              class1fr="delay-500"
+                            >
+                              <button
+                                onClick={() => { dispatch(changeData({ key: "phone", value: dataOrder.phone })); setOpenModPhone(false); setDataOrder(prev => ({ ...prev, phone: null })) }}
                               >
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setDataOrder(prev => ({
-                                      ...prev,
-                                      address: { ...prev.address, data: address }
-                                    }));
-                                  }
-                                  }
-                                >
-                                  {address}
-                                </button>
-                              </GridComp>
-                            );
-                          })}
-
+                                Modificar número actual
+                              </button>
+                            </GridComp>
+                          </GridComp>
                         </div>
 
-                      </GridComp>
-                    </div>
+                        <div>
+                          <h3 className="my-2">Dirección de envio</h3>
+
+                          <OrderInput
+                            label="Indica nueva dirección"
+                            name="address"
+                            placeholder="Dirección"
+                            value={dataOrder.address}
+                            setValue={setDataOrder}
+                          />
+
+                          <GridComp
+                            condition={!openAddress}
+                          >
+                            <button
+                              onClick={() => dispatch(changeData({ key: "address", value: [...apUser.address, dataOrder.address] }))}
+                            >
+                              Guardar dirección
+                            </button>
+                          </GridComp>
+
+                          <GridComp
+                            condition={openAddress}
+                          >
+                            <div>
+                              {apUser?.address?.map((address, i) => {
+                                let query = String(dataOrder.address)?.trim().toLowerCase() || "";
+                                const matches = query.length > 0 && (query.length !== address.length && address.toLowerCase().includes(query));
+
+                                return (
+                                  <GridComp
+                                    key={i}
+                                    condition={matches}
+                                    class1fr="my-1"
+                                    class0fr="my-0"
+                                  >
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setDataOrder(prev => ({
+                                          ...prev,
+                                          address: address
+                                        }));
+                                      }
+                                      }
+                                    >
+                                      {address}
+                                    </button>
+                                  </GridComp>
+                                );
+                              })}
+
+                            </div>
+
+                          </GridComp>
+                        </div>
+                      </div>
+                      : <div>
+                        <h2>Datos de envio</h2>
+                        <div>
+                          <h3 className="my-2">Nombre</h3>
+                          <OrderInput
+                            label=""
+                            name="name"
+                            placeholder="Nombre"
+                            value={dataOrder.name}
+                            setValue={setDataOrder}
+                          />
+                        </div>
+
+                        <div>
+                          <h3 className="my-2">Teléfono</h3>
+                          <OrderInput
+                            label=""
+                            name="phone"
+                            placeholder="Teléfono"
+                            value={dataOrder.phone}
+                            setValue={setDataOrder}
+                          />
+                        </div>
+
+                        <div>
+                          <h3 className="my-2">Dirección de envio</h3>
+                          <OrderInput
+                            label=""
+                            name="address"
+                            placeholder="Dirección"
+                            value={dataOrder.address}
+                            setValue={setDataOrder}
+                          />
+
+                        </div>
+                      </div>
+                    }
 
 
 
@@ -411,14 +445,9 @@ export const MyCart = () => {
 
                       setStep(3)
                       setDataOrder({
-                        address: {
-                          data: '',
-                          check: false
-                        },
-                        phone: {
-                          data: null,
-                          check: false
-                        },
+                        name: '',
+                        address: '',
+                        phone: null,
                       })
 
                     }

@@ -9,7 +9,7 @@ export const AlertStock = () => {
 
     return (
         <div
-            className={`flex items-center fixed mx-3 bottom-5 md:left-1/2 md:-translate-x-1/2 text-center 
+            className={`flex w-[90%] max-w-100 items-center fixed mx-3 bottom-5 left-1/2 -translate-x-1/2 text-center 
                 duration-500 ease-in-out transition-discrete bg-red-600 text-white font-medium px-4 py-3 
                 rounded-lg shadow-2xl border border-red-500 backdrop-blur-sm tracking-wide z-80
                 ${showAlert

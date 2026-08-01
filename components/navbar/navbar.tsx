@@ -21,8 +21,8 @@ export const Navbar = () => {
   const [openOptions, setOpenOptions] = useState<string | null>(null)
 
   return (
-    <div className="sticky top-0 left-0 md:w-full bg-(--backgroundlt) text-(--foreground) z-9 relative self-center">
-      <div className="mx-auto flex flex-wrap md:flex-nowrap justify-between w-full max-w-screen-xl md:px-4 min-h-15">
+    <div className="sticky top-0 left-0 lg:w-full bg-(--backgroundlt) text-(--foreground) z-9 relative self-center">
+      <div className="mx-auto flex flex-wrap lg:flex-nowrap justify-between w-full max-w-screen-xl lg:px-4 min-h-15">
 
         <TransitionLink href="/">
           <Image
@@ -33,20 +33,20 @@ export const Navbar = () => {
           />
         </TransitionLink>
 
-        <div className="flex justify-around flex-row-reverse md:flex-row w-full md:w-1/2 px-2 order-2 md:order-1">
-          <div className="content-center w-1/3 md:w-fit justify-items-center px-2">
+        <div className="flex justify-around flex-row-reverse lg:flex-row w-full lg:w-1/2 px-2 order-2 lg:order-1">
+          <div className="content-center w-1/3 lg:w-fit justify-items-center px-2">
             <Categories setOpenOptions={setOpenOptions} />
           </div>
 
-          <div className="content-center w-full md:w-1/2 md:w-fit">
+          <div className="content-center w-full lg:w-1/2 lg:w-fit">
             <InputSearch setFindProduct={setFindProduct} setOpenOptions={setOpenOptions} />
           </div>
         </div>
 
-        <div className="flex justify-between w-fit min-w-[117px] md:w-1/5 md:min-w-55 order-1 md:order-2">
+        <div className="flex justify-between w-fit min-w-[117px] lg:w-1/5 lg:min-w-55 order-1 lg:order-2">
 
           {/* Contacto */}
-          <TransitionLink href="/contacto" className="hidden md:block content-center p-2">Contacto</TransitionLink>
+          <TransitionLink href="/contacto" className="hidden lg:block content-center p-2">Contacto</TransitionLink>
 
           {/* Carrito */}
           <InfoCart />
@@ -56,7 +56,7 @@ export const Navbar = () => {
         </div>
       </div>
 
-      <div className={`max-w-screen-lg md:w-[calc(100%-350px)] px-3 justify-self-center duration-1000 ease-in-out ${isCartOpen ? "-translate-x-[175px] min-[2000px]:translate-none" : "translate-none"}`}>
+      <div className={`max-w-screen-xl lg:w-[calc(100%-350px)] px-3 justify-self-center duration-1000 ease-in-out ${isCartOpen ? "-translate-x-[175px] min-[2000px]:translate-none" : "translate-none"}`}>
 
         <ListCategories setOpenOptions={setOpenOptions} openOptions={openOptions} />
 

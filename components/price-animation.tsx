@@ -35,7 +35,7 @@ export const PriceAnimate = ({
     ]
 
     return (
-        <div className='flex md:flex-col'>
+        <div className='flex lg:flex-col'>
             {title && <h2 className='me-1'>{title}</h2>}
             <div
                 className="flex overflow-hidden"

@@ -45,8 +45,8 @@ export const InputUser = ({
     const isVisible = lastData !== data || changeConf !== "";
 
     return (
-        <div className="md:mb-2">
-            <label htmlFor={type} className="hidden md:block text-sm">{placeholder}</label>
+        <div className="lg:mb-2">
+            <label htmlFor={type} className="hidden lg:block text-sm">{placeholder}</label>
             <div className={`flex justify-between ${border} border-[#ffffff50]`}>
                 <textarea
                     id={type}
