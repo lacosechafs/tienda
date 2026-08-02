@@ -21,7 +21,7 @@ export const Navbar = () => {
   const [openOptions, setOpenOptions] = useState<string | null>(null)
 
   return (
-    <div className="sticky top-0 left-0 lg:w-full bg-(--backgroundlt) text-(--foreground) z-9 relative self-center">
+    <div className="sticky top-0 left-0 lg:w-full bg-(--backgroundlt) text-(--foreground) z-99 relative self-center">
       <div className="mx-auto flex flex-wrap lg:flex-nowrap justify-between w-full max-w-screen-xl lg:px-4 min-h-15">
 
         <TransitionLink href="/">

@@ -4,7 +4,6 @@ import { PropsBoxProduct } from "@/types/types";
 import { useMemo, useState, useEffect } from "react";
 import { ProductHero } from "./product-hero";
 import { DataProduct } from "./data-product";
-import { calculateFinalPrice } from "@/helpers/calculate-price";
 import { DataFavs } from "./data-favs";
 
 export const BoxProduct = ({
@@ -33,17 +32,18 @@ export const BoxProduct = ({
     return (
         <div className="flex flex-col border border-[#fce49f] rounded-lg h-full">
             {title
-                ? <>
+                ? <div className="flex flex-row-reverse md:flex-col">
                     <ProductHero ids={ids} orderCatalog={orderCatalog} />
                     <DataProduct
                         {...{
                             id,
                             name,
                             title,
-                            orderCatalog
+                            orderCatalog,
+                            ids
                         }}
                     />
-                </>
+                </div>
                 :
                 <DataFavs
                     name={name}

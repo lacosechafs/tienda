@@ -11,11 +11,14 @@ export const OrderHistory = () => {
     const ordersUser = useAppSelector((state: RootState) => state.user.data).orders
 
     useEffect(() => {
-        if (openOrder !== null) {
+        if (openOrder == 0) {
+            setProductsOrder(ordersUser?.[0]?.products as Array<ProductGroup>);
+        } else if (openOrder !== null) {
             setTimeout(() => {
                 setProductsOrder(ordersUser?.[openOrder]?.products as Array<ProductGroup>);
             }, 500);
-        } else {
+        }
+        else {
             setTimeout(() => {
                 setProductsOrder([])
             }, 500);
@@ -64,7 +67,7 @@ export const OrderHistory = () => {
                     )
                 })}
             </div>
-            <GridComp condition={openOrder !== null} class1fr="delay-800" class0fr="delay-0">
+            <GridComp condition={openOrder !== null} class1fr={!openOrder ? "delay-500" : "delay-800"} class0fr="delay-0">
                 {productsOrder?.map(p => {
                     return Object.entries(p).map(([key, value], i) => {
                         return (

@@ -35,7 +35,7 @@ export const PriceAnimate = ({
     ]
 
     return (
-        <div className='flex lg:flex-col'>
+        <div className='flex flex-col'>
             {title && <h2 className='me-1'>{title}</h2>}
             <div
                 className="flex overflow-hidden"
@@ -60,9 +60,6 @@ export const PriceAnimate = ({
                             </span>
                         );
                     }
-
-
-
 
                     const digit = parseInt(char, 10)
 

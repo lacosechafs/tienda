@@ -2,19 +2,19 @@ import { useAppSelector } from "@/hooks/useRedux";
 import { RootState } from "@/redux/makeStore";
 
 interface Props {
-    id: number;
     size: number;
     unit: string;
-    haveStock: boolean;
     price: number;
+    show_discount: boolean;
+    percentage_discount: number;
 }
 
 export const SizeZone = ({
-    id,
     size,
     unit,
-    haveStock,
-    price
+    price,
+    show_discount,
+    percentage_discount
 }: Props) => {
 
     return (
@@ -23,9 +23,17 @@ export const SizeZone = ({
         >
             <p>
                 {size + unit}
-                <span className="ms-1 opacity-80">
-                    (${price.toLocaleString('es-ES', { useGrouping: 'always' })})
-                </span>
+            </p>
+            <p className="ms-1">
+                x ${price.toLocaleString('es-ES', { useGrouping: 'always' })}
+                {/* {show_discount &&
+                    <span className="relative text-sm opacity-80 line-through">
+                        &nbsp;${(price / (1 - (percentage_discount) / 100)).toLocaleString('es-ES', { useGrouping: 'always' })}&nbsp;
+                        <span className="absolute text-sm bottom-full -right-2 opacity-80 translate-1/2">
+                            {percentage_discount}%
+                        </span>
+                    </span>
+                } */}
             </p>
         </div >
 

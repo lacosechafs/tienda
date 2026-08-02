@@ -17,6 +17,7 @@ import { changeData, setApData } from "@/redux/userSlice"
 import { GridComp } from "./grid-comp"
 import { FavsProducts } from "./navbar/favs-products"
 import { OrderHistory } from "./navbar/order-history"
+import { DisplayWidth } from "@/helpers/display-width"
 
 export const FormSign = ({ openOptions }: FormSignType) => {
 
@@ -88,6 +89,8 @@ export const FormSign = ({ openOptions }: FormSignType) => {
         return () => clearTimeout(timer)
 
     }, [errorUser])
+
+    const displayWidth = DisplayWidth()
 
     return (
         <div ref={accountRef} className="relative content-center justify-items-center">

@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="w-full mt-5 px-2">
       <Hero />
-      <ProductsOffers />
+      {/* <ProductsOffers /> */}
       <FeaturedProducts />
     </div>
   )

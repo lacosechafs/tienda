@@ -19,6 +19,7 @@ export interface dataCatalog {
     stored_stock: number;
     featured: boolean;
     visible: boolean;
+    show_discount: boolean;
 }
 
 export interface ArrayProduct extends dataCatalog {
@@ -171,6 +172,7 @@ export interface PropsBoxProduct extends BasePropsProduct {
 
 export interface PropsDataProduct extends BasePropsProduct {
     orderCatalog: Array<dataCatalog>;
+    ids: Array<number>;
 }
 
 export interface PropsFavProduct {
@@ -187,3 +189,8 @@ export interface dataOrderType {
 }
 
 export type ProductGroup = Record<string, Array<dataOrderType> | undefined>
+
+export interface HeroProductType {
+    ids: Array<number>;
+    orderCatalog: Array<dataCatalog>;
+}
