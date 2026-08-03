@@ -11,6 +11,7 @@ export interface dataCatalog {
     id: number;
     percentage_discount: number;
     public_price: number;
+    normal_price: number;
     size: number;
     start_discount: string | number | Date;
     min_stock: number;

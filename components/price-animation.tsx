@@ -1,4 +1,3 @@
-import React from 'react'
 import { useAppSelector } from '../hooks/useRedux'
 import { RootState } from '@/redux/makeStore'
 import { dataCatalog } from '@/types/types'
@@ -10,17 +9,21 @@ export const PriceAnimate = ({
     fontSize,
     delay,
     title,
+    priceToShow,
 }: {
-    cartProducts: Array<dataCatalog>
-    fontSize: number
-    delay?: number
-    title?: string
+    cartProducts: Array<dataCatalog>;
+    fontSize: number;
+    delay?: number;
+    title?: string;
+    priceToShow?: number;
 }) => {
     const productsInCart = useAppSelector((state: RootState) => state.cart.products) || []
 
-    const rawSubTotal = getTotal(productsInCart, cartProducts )
+    const rawSubTotal = getTotal(productsInCart, cartProducts)
 
-    const formattedSubTotal = rawSubTotal.toLocaleString('es-ES', {
+    const numberToShow = priceToShow ? priceToShow : rawSubTotal
+
+    const formattedSubTotal = numberToShow.toLocaleString('es-ES', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
         useGrouping: true,

@@ -29,10 +29,11 @@ export const BoxProduct = ({
         setIds(orderCatalog.map(m => m.id));
     }, [orderCatalog]);
 
+
     return (
         <div className="flex flex-col border border-[#fce49f] rounded-lg h-full">
             {title
-                ? <div className="flex flex-row-reverse md:flex-col">
+                ? <div className="flex flex-row-reverse md:flex-col relative">
                     <ProductHero ids={ids} orderCatalog={orderCatalog} />
                     <DataProduct
                         {...{

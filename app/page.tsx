@@ -1,4 +1,3 @@
-import { FavsProducts } from "@/components/navbar/favs-products";
 import { FeaturedProducts } from "@/components/featured-products";
 import { Hero } from "@/components/hero";
 import { ProductsOffers } from "@/components/products-offers";

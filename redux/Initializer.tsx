@@ -25,7 +25,7 @@ export const Initializer = ({ initialData }: { initialData: any[] }) => {
                         const price = (d.available_discount && (start < today && end > today))
                             ? calculateFinalPrice(d) : d.public_price
 
-                        return { ...d, public_price: price, show_discount: d.available_discount && (start < today && end > today) }
+                        return { ...d, normal_price: d.public_price, public_price: price, show_discount: d.available_discount && (start < today && end > today) }
                     })
 
                     return ({

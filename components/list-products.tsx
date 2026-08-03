@@ -14,7 +14,7 @@ export const ListProducts = ({ products, title }: { products: Array<dataProducts
             {title && (
                 <h1 className="text-2xl font-bold mb-4">{title}</h1>
             )}
-            <div className="grid grid-cols-1 px-3 sm:px-0 sm:[grid-template-columns:repeat(auto-fill,minmax(270px,1fr))] gap-4 max-w-full">
+            <div className="grid grid-cols-1 px-3 sm:px-0 sm:[grid-template-columns:repeat(auto-fill,minmax(270px,1fr))] gap-5 sm:gap-4 max-w-full">
                 {visibleProducts.map(m => (
                     <BoxProduct
                         key={m.id}
