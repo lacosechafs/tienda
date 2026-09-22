@@ -167,11 +167,11 @@ export interface BasePropsProduct {
     id: number;
 }
 
-export interface PropsBoxProduct extends BasePropsProduct {
+export interface PropsBoxProduct extends Partial<BasePropsProduct> {
     catalog: Array<dataCatalog>;
 }
 
-export interface PropsDataProduct extends BasePropsProduct {
+export interface PropsDataProduct extends Partial<BasePropsProduct> {
     orderCatalog: Array<dataCatalog>;
     ids: Array<number>;
 }
@@ -194,4 +194,24 @@ export type ProductGroup = Record<string, Array<dataOrderType> | undefined>
 export interface HeroProductType {
     ids: Array<number>;
     orderCatalog: Array<dataCatalog>;
+}
+
+export interface objListByCatType {
+    category: number | null
+    catalog: number | null
+    index: number
+}
+
+export interface ListProdByCatType {
+    id: number;
+    name: string;
+    prods: Array<dataProductsPartial>;
+    setProdSelected: Dispatch<SetStateAction<objListByCatType>>;
+    prodSelected: objListByCatType;
+}
+
+export interface ListProductsNDType {
+    title?: string;
+    products: Array<dataProductsPartial>;
+    setProdSelected: Dispatch<SetStateAction<objListByCatType>>;
 }

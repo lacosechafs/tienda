@@ -5,6 +5,7 @@ import { useMemo, useState, useEffect } from "react";
 import { ProductHero } from "./product-hero";
 import { DataProduct } from "./data-product";
 import { DataFavs } from "./data-favs";
+import { DisplayWidth } from "@/helpers/display-width";
 
 export const BoxProduct = ({
     id,
@@ -30,27 +31,23 @@ export const BoxProduct = ({
     }, [orderCatalog]);
 
 
+    const displayWidth = DisplayWidth()
+    const maxDiscount = Math.max(...orderCatalog.map(m => m.percentage_discount))
+
     return (
         <div className="flex flex-col border border-[#fce49f] rounded-lg h-full">
-            {title
-                ? <div className="flex flex-row-reverse md:flex-col relative">
-                    <ProductHero ids={ids} orderCatalog={orderCatalog} />
-                    <DataProduct
-                        {...{
-                            id,
-                            name,
-                            title,
-                            orderCatalog,
-                            ids
-                        }}
-                    />
-                </div>
-                :
-                <DataFavs
-                    name={name}
+            <div className="flex flex-row-reverse md:flex-col relative">
+                <ProductHero ids={ids} orderCatalog={orderCatalog} />
+                <DataProduct
+                    {...{
+                        id,
+                        name,
+                        title,
+                        orderCatalog,
+                        ids
+                    }}
                 />
-
-            }
+            </div>
         </div>
     );
 };

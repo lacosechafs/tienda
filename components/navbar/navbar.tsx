@@ -34,9 +34,9 @@ export const Navbar = () => {
         </TransitionLink>
 
         <div className="flex justify-around flex-row-reverse lg:flex-row w-full lg:w-1/2 px-2 order-2 lg:order-1">
-          <div className="content-center w-1/3 lg:w-fit justify-items-center px-2">
+          {/* <div className="content-center w-1/3 lg:w-fit justify-items-center px-2">
             <Categories setOpenOptions={setOpenOptions} />
-          </div>
+          </div> */}
 
           <div className="content-center w-full lg:w-1/2 lg:w-fit">
             <InputSearch setFindProduct={setFindProduct} setOpenOptions={setOpenOptions} />
@@ -56,9 +56,9 @@ export const Navbar = () => {
         </div>
       </div>
 
-      <div className={`max-w-screen-xl lg:w-[calc(100%-350px)] px-3 justify-self-center duration-1000 ease-in-out ${isCartOpen ? "-translate-x-[175px] min-[2000px]:translate-none" : "translate-none"}`}>
+      <div className={`max-w-screen-xl lg:w-[calc(100%-350px)] px-3 justify-self-center duration-1000 ease-in-out ${isCartOpen ? "lg:-translate-x-[175px] min-[2000px]:translate-none" : "lg:translate-none"}`}>
 
-        <ListCategories setOpenOptions={setOpenOptions} openOptions={openOptions} />
+        {/* <ListCategories setOpenOptions={setOpenOptions} openOptions={openOptions} /> */}
 
         <ResultSearch findProduct={findProduct} setOpenOptions={setOpenOptions} openOptions={openOptions} />
 
