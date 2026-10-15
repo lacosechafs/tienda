@@ -70,8 +70,8 @@ export const ListCategoriesBody = () => {
                         return (
                             <div key={p.id} className='w-full shrink-0 content-end relative'>
                                 <div className='mx-2 px-4 py-4 rounded-2xl shadow-2xl
-                                                backdrop-blur-[6px] bg-gray-800/30
-                                                shadow-[inset_1px_1px_0_rgba(255,255,255,0.75),inset_0_0_5px_rgba(255,255,255,0.75)]
+                                                backdrop-blur-[6px] bg-gray-800/80
+                                                shadow-[inset_1px_1px_0_rgba(252,228,159,0.75),inset_0_0_5px_rgba(252,228,159,0.75)]
                                 '>
                                     <div className='flex justify-between items-center mb-2'>
                                         <p className='text-[20px] font-semibold'>{p.name}</p>

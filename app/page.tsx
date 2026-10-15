@@ -27,7 +27,7 @@ export default function Home() {
 
   return (
     <div className="w-full mt-5">
-      <Hero />
+      {/* <Hero /> */}
       <ListCategoriesBody />
       {/* <ProductsOffers /> */}
       {/* <FeaturedProducts /> */}

@@ -14,7 +14,7 @@ export const ListProductsND = ({
     if (!visibleProducts.length) return
 
     return (
-        <div className="px-2">
+        <div className="px-1">
             {title && (
                 <h1 className="text-2xl font-bold mb-4">{title}</h1>
             )}
@@ -24,7 +24,7 @@ export const ListProductsND = ({
                         <div key={m.id}
                             className="flex my-1 rounded-lg px-2 py-1 mb-2
                                        backdrop-blur-[6px] bg-gray-800/20
-                                       shadow-[inset_1px_1px_0_rgba(255,255,255,0.75),inset_0_0_5px_rgba(255,255,255,0.75)]
+                                       shadow-[inset_1px_1px_0_rgba(241,200,81,0.75),inset_0_0_5px_rgba(161,151,120,0.75)]
                         ">
                             <div
                                 onClick={() => setProdSelected(prev => ({ ...prev, catalog: prev.catalog === m.id ? null : m.id, index: i }))}
