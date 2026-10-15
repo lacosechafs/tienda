@@ -68,7 +68,7 @@ export const DataProduct = ({
                 </div>
             </div>
 
-            <GridComp condition={displayWidth >= 768 ? true : openAddOptions} extraClass="">
+            {/* <GridComp condition={displayWidth >= 768 ? true : openAddOptions} extraClass="">
                 <div className="flex flex-col w-full justify-around md:p-0">
                     {orderCatalog.length > 0 &&
                         <div className="flex justify-between w-full py-2">
@@ -163,7 +163,7 @@ export const DataProduct = ({
                         </div>
                     </div>
                 </div>
-            </GridComp>
+            </GridComp> */}
         </div >
     )
 }
