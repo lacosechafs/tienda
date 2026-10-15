@@ -60,14 +60,6 @@ export const ListCategoriesBody = () => {
                 className={`fixed bottom-2 left-0 right-0 overflow-hidden transition-transform duration-500 ease-out ${isOpen ? 'translate-y-0 pointer-events-auto' : 'translate-y-[calc(100%+16px)] pointer-events-none'
                     }`}
             >
-                <div className='flex justify-end'>
-                    <button
-                        onClick={() => {
-                            setProdSelected(prev => ({ ...prev, catalog: null, index: 0 }))
-                            setFloatingCategory(null)
-                        }}
-                    >Canc</button>
-                </div>
                 <div
                     key={floatingCategory ?? 'no-cat'}
                     className={`flex w-screen transition-transform ease-in-out ${isOpen ? "duration-500" : "duration-0"}`}
@@ -76,9 +68,24 @@ export const ListCategoriesBody = () => {
                     {activeProducts.map((p: dataProductsPartial) => {
                         const visibleProd = prodSelected.catalog === p.id
                         return (
-                            <div key={p.id} className='w-full shrink-0 content-end'>
-                                <div className='bg-red-500 mx-5 px-2 rounded-lg'>
-                                    <p>{p.name}</p>
+                            <div key={p.id} className='w-full shrink-0 content-end relative'>
+                                <div className='bg-red-500 mx-2 px-2 rounded-lg'>
+                                    <div className='flex justify-between mb-2'>
+                                        <p className='text-[20px]'>{p.name}</p>
+                                        <button
+                                            onClick={() => {
+                                                setProdSelected(prev => ({ ...prev, catalog: null, index: 0 }))
+                                                setFloatingCategory(null)
+                                            }}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
+                                                    <path d="M5.47 5.47a.75.75 0 0 1 1.06 0l12 12a.75.75 0 1 1-1.06 1.06l-12-12a.75.75 0 0 1 0-1.06" />
+                                                    <path d="M18.53 5.47a.75.75 0 0 1 0 1.06l-12 12a.75.75 0 0 1-1.06-1.06l12-12a.75.75 0 0 1 1.06 0" />
+                                                </g>
+                                            </svg>
+                                        </button>
+                                    </div>
                                     <AddCartFixed
                                         name={p.name}
                                         title=""

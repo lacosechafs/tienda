@@ -1,6 +1,6 @@
 "use client"
 
-import { memo, useMemo } from 'react'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import { GridComp } from '../grid-comp'
 import { ListProductsND } from './list-products-nd'
 import { ListProdByCatType } from '@/types/types'
@@ -25,9 +25,50 @@ export const ListProdByCat = memo(({
         }, 0);
     }, [prods]);
 
+    const catRef = useRef<HTMLDivElement>(null)
+
+    // useEffect(() => {
+    //     if (prodSelected.category === id && catRef.current) {
+    //         const timer = setTimeout(() => {
+    //             requestAnimationFrame(() => {
+    //                 const element = catRef.current;
+    //                 if (!element) return;
+
+    //                 const startPosition = window.pageYOffset;
+    //                 const elementRect = element.getBoundingClientRect();
+    //                 const absoluteTop = elementRect.top + startPosition;
+
+    //                 const targetPosition = absoluteTop - 100;
+    //                 const distance = targetPosition - startPosition;
+
+    //                 let startTime: number | null = null;
+    //                 const duration = 300;
+
+    //                 const animation = (currentTime: number) => {
+    //                     if (startTime === null) startTime = currentTime;
+    //                     const timeElapsed = currentTime - startTime;
+    //                     const progress = Math.min(timeElapsed / duration, 1);
+
+    //                     const ease = 1 - Math.pow(1 - progress, 3);
+    //                     window.scrollTo(0, startPosition + distance * ease);
+
+    //                     if (timeElapsed < duration) {
+    //                         requestAnimationFrame(animation);
+    //                     }
+    //                 };
+
+    //                 requestAnimationFrame(animation);
+    //             });
+    //         }, 500);
+
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [prodSelected.index, id]);
+
     return (
         <div className='max-w-screen'>
             <div
+                id={String(id)} ref={catRef}
                 onClick={() => {
                     setProdSelected(prev => {
                         const isSameCategory = prev.category === id
@@ -38,7 +79,7 @@ export const ListProdByCat = memo(({
                         }
                     })
                 }}
-                className='flex justify-between items-center border border-[#fce49f] rounded-lg h-full py-1 my-1'
+                className='flex justify-between items-center border border-[#fce49f] rounded-lg h-full py-1 my-1 scroll-mt-[112px]'
             >
                 <h2 className="font-bold text-[#fea70e] px-2">
                     {name}
