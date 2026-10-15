@@ -79,7 +79,10 @@ export const ListProdByCat = memo(({
                         }
                     })
                 }}
-                className='flex justify-between items-center border border-[#fce49f] rounded-lg h-full py-1 my-1 scroll-mt-[112px]'
+                className='flex justify-between items-center border border-[#fce49f] rounded-lg h-full py-1 my-1 scroll-mt-[112px]
+                           backdrop-blur-[6px] bg-gray-800/30
+                           shadow-[inset_1px_1px_0_rgba(255,255,255,0.75),inset_0_0_5px_rgba(255,255,255,0.75)]
+                '
             >
                 <h2 className="font-bold text-[#fea70e] px-2">
                     {name}

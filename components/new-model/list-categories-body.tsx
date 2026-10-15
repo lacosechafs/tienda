@@ -69,16 +69,20 @@ export const ListCategoriesBody = () => {
                         const visibleProd = prodSelected.catalog === p.id
                         return (
                             <div key={p.id} className='w-full shrink-0 content-end relative'>
-                                <div className='bg-red-500 mx-2 px-2 rounded-lg'>
-                                    <div className='flex justify-between mb-2'>
-                                        <p className='text-[20px]'>{p.name}</p>
+                                <div className='mx-2 px-4 py-4 rounded-2xl shadow-2xl
+                                                backdrop-blur-[6px] bg-gray-800/30
+                                                shadow-[inset_1px_1px_0_rgba(255,255,255,0.75),inset_0_0_5px_rgba(255,255,255,0.75)]
+                                '>
+                                    <div className='flex justify-between items-center mb-2'>
+                                        <p className='text-[20px] font-semibold'>{p.name}</p>
                                         <button
+                                            className='p-1 rounded-full hover:bg-black/5 transition-colors cursor-pointer'
                                             onClick={() => {
-                                                setProdSelected(prev => ({ ...prev, catalog: null, index: 0 }))
+                                                setProdSelected(prev => ({ ...prev, catalog: null }))
                                                 setFloatingCategory(null)
                                             }}
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
                                                 <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
                                                     <path d="M5.47 5.47a.75.75 0 0 1 1.06 0l12 12a.75.75 0 1 1-1.06 1.06l-12-12a.75.75 0 0 1 0-1.06" />
                                                     <path d="M18.53 5.47a.75.75 0 0 1 0 1.06l-12 12a.75.75 0 0 1-1.06-1.06l12-12a.75.75 0 0 1 1.06 0" />

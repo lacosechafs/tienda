@@ -21,7 +21,11 @@ export const ListProductsND = ({
             <div className="max-w-full">
                 {visibleProducts.map((m, i) => {
                     return (
-                        <div key={m.id} className="flex my-1">
+                        <div key={m.id}
+                            className="flex my-1 rounded-lg px-2 py-1 mb-2
+                                       backdrop-blur-[6px] bg-gray-800/20
+                                       shadow-[inset_1px_1px_0_rgba(255,255,255,0.75),inset_0_0_5px_rgba(255,255,255,0.75)]
+                        ">
                             <div
                                 onClick={() => setProdSelected(prev => ({ ...prev, catalog: prev.catalog === m.id ? null : m.id, index: i }))}
                                 key={m.id}
