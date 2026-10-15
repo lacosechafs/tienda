@@ -176,6 +176,10 @@ export interface PropsDataProduct extends Partial<BasePropsProduct> {
     ids: Array<number>;
 }
 
+export interface AddCartType extends Partial<BasePropsProduct> {
+    orderCatalog: Array<dataCatalog>;
+}
+
 export interface PropsFavProduct {
     name: string;
 }

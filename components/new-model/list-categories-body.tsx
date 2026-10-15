@@ -33,13 +33,13 @@ export const ListCategoriesBody = () => {
 
     const activeProducts = activeCategory?.products.filter((m: dataProductsPartial) => m.catalog.length) ?? []
 
-
     const validCategories = useMemo(() => {
         return data?.filter(c => c.products?.some((d: dataProductsPartial) => d.catalog?.length)) ?? []
     }, [data])
 
     const isOpen = Boolean(deferredSelected.catalog && deferredSelected.category)
-    console.log(validCategories)
+
+    console.log(deferredSelected)
 
     return (
         <div ref={catListRef}>
@@ -60,9 +60,17 @@ export const ListCategoriesBody = () => {
                 className={`fixed bottom-2 left-0 right-0 overflow-hidden transition-transform duration-500 ease-out ${isOpen ? 'translate-y-0 pointer-events-auto' : 'translate-y-[calc(100%+16px)] pointer-events-none'
                     }`}
             >
+                <div className='flex justify-end'>
+                    <button
+                        onClick={() => {
+                            setProdSelected(prev => ({ ...prev, catalog: null, index: 0 }))
+                            setFloatingCategory(null)
+                        }}
+                    >Canc</button>
+                </div>
                 <div
                     key={floatingCategory ?? 'no-cat'}
-                    className='flex w-screen transition-transform duration-500 ease-in-out'
+                    className={`flex w-screen transition-transform ease-in-out ${isOpen ? "duration-500" : "duration-0"}`}
                     style={{ transform: `translateX(-${100 * (deferredSelected.index ?? 0)}%)` }}
                 >
                     {activeProducts.map((p: dataProductsPartial) => {

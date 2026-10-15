@@ -13,9 +13,6 @@ export const ListProdByCat = memo(({
     prodSelected
 }: ListProdByCatType) => {
 
-    console.log(
-        prods)
-
     const maxDiscount = useMemo(() => {
         return prods.reduce((max: number, prod) => {
             if (!prod.catalog) return max;
